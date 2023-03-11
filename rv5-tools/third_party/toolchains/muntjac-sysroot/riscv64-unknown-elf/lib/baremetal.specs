@@ -1,0 +1,19 @@
+# Copyright lowRISC contributors.
+# Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# SPDX-License-Identifier: Apache-2.0
+
+# Specs file for baremetal Muntjac.
+
+%rename cc1 baremetal_cc1
+%rename lib baremetal_lib
+%rename link baremetal_link
+
+*cc1:
+%(baremetal_cc1) -mcmodel=medany
+
+*lib:
+--start-group -lc -lgloss --end-group
+
+# Add a custom linker script to provide communication to/from host.
+*link:
+%(baremetal_link) -dT link.ld -static

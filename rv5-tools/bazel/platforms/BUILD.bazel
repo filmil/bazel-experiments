@@ -1,0 +1,8 @@
+platform(
+    name = "muntjac_baremetal",
+    constraint_values = [
+        "@platforms//os:none",
+        "@platforms//cpu:riscv64",
+    ],
+    visibility = [ "//visibility:public", ],
+)

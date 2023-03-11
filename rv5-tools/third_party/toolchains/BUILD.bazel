@@ -1,0 +1,12 @@
+load("@bazel_lib//lib:transitions.bzl", "platform_transition_binary")
+
+cc_binary(
+    name = "hello",
+    srcs = [ "hello.cc" ],
+)
+
+platform_transition_binary(
+    name = "hello_rv64",
+    binary = ":hello",
+    target_platform = "//bazel/platforms:muntjac_baremetal",
+)

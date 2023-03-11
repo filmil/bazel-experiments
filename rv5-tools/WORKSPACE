@@ -1,0 +1,31 @@
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "new_git_repository")
+
+http_archive(
+    name = "bazel_skylib",
+    sha256 = "b8a1527901774180afc798aeb28c4634bdccf19c4d98e7bdd1ce79d1fe9aaad7",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.4.1/bazel-skylib-1.4.1.tar.gz",
+        "https://github.com/bazelbuild/bazel-skylib/releases/download/1.4.1/bazel-skylib-1.4.1.tar.gz",
+    ],
+)
+load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+bazel_skylib_workspace()
+
+
+http_archive(
+    name = "muntjac_toolchain",
+    strip_prefix = "lowrisc-toolchain-rv64imac-20230228-1",
+    url = "https://github.com/lowRISC/lowrisc-toolchains/releases/download/20230228-1/lowrisc-toolchain-rv64imac-20230228-1.tar.xz",
+    build_file = "//third_party/toolchains:BUILD.muntjac_toolchain.bazel",
+    sha256 = "82523de6732178600e99afc55e70b34dacb10db35dbf9913b4c39d96940d2cdb",
+)
+
+
+git_repository(
+    name = "bazel_lib",
+    commit = "be41c1d686cc06fc27c8b0bffa8cba417e1cca71",
+    remote = "https://github.com/aspect-build/bazel-lib",
+    shallow_since = "1678393484 -0800",
+)

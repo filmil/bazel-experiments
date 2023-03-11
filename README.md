@@ -1,2 +1,1 @@
-# bazel-experiments
-Experimenting with Bazel
+# Experiments with bazel build rules
