@@ -15,7 +15,6 @@ filegroup(
   name = 'all_files',
   srcs = [
     '@muntjac_toolchain//:toolchain',
-    '//third_party/toolchains/muntjac-sysroot/riscv64-unknown-elf:sysroot',
     ':wrappers',
   ],
 )

@@ -1,0 +1,3 @@
+build \
+  --crosstool_top=//bazel/toolchain/muntjac-baremetal:toolchain \
+  --cpu=riscv64

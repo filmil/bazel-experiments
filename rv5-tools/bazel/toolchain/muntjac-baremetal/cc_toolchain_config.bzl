@@ -70,8 +70,8 @@ def _impl(ctx):
                 flag_groups = [
                     flag_group(
                         flags = [
-                            "-specs", "third_party/toolchains/muntjac-sysroot/riscv64-unknown-elf/lib/baremetal.specs",
-                            "--sysroot=third_party/toolchains/muntjac-sysroot/riscv64-unknown-elf",
+                            "-specs", "external/muntjac_toolchain/riscv64-unknown-elf/lib/baremetal.specs",
+                            "--sysroot=external/muntjac_toolchain/riscv64-unknown-elf",
                             "-no-canonical-prefixes",
                             "-fno-canonical-system-headers",
                             "-Wno-builtin-macro-redefined",
@@ -94,7 +94,8 @@ def _impl(ctx):
                 flag_groups = ([
                     flag_group(
                         flags = [
-                            "--sysroot=third_party/toolchains/muntjac-sysroot/riscv64-unknown-elf",
+                            "-specs", "external/muntjac_toolchain/riscv64-unknown-elf/lib/baremetal.specs",
+                            "--sysroot=external/muntjac_toolchain/riscv64-unknown-elf",
                         ],
                     ),
                 ]),
