@@ -1,3 +1,7 @@
+try-import %workspace%/user.bazelrc
+
 build \
-  --crosstool_top=//bazel/toolchain/muntjac-baremetal:toolchain \
-  --cpu=riscv64
+  --incompatible_enable_cc_toolchain_resolution
+
+#--toolchain_resolution_debug=@bazel_tools//tools/cpp:toolchain_type
+

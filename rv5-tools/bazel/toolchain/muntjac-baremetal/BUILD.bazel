@@ -33,10 +33,28 @@ cc_toolchain(
     strip_files = ":empty",
 )
 
+# DO NOT USE THIS. It's an old way to register toolchains.
 cc_toolchain_suite(
     name = "toolchain",
     toolchains = {
         "riscv64": ":muntjac_baremetal_toolchain",
+        "k8": "@local_config_cc//:cc-compiler-k8",
     },
     tags = ["manual"],
 )
+
+# Use this label in register_toolchains in //WORKSPACE
+toolchain(
+    name = "muntjac_baremetal",
+    exec_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    target_compatible_with = [
+        "@platforms//os:none",
+        "@platforms//cpu:riscv64",
+    ],
+    toolchain = ":muntjac_baremetal_toolchain",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)
+

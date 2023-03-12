@@ -19,7 +19,10 @@ http_archive(
     strip_prefix = "lowrisc-toolchain-rv64imac-20230228-1-muntjac",
     url = "https://storage.googleapis.com/filmil-storage/lowrisc-toolchain-rv64imac-20230228-1-muntjac.tar.gz",
     build_file = "//third_party/toolchains:BUILD.muntjac_toolchain.bazel",
+    sha256 = "0ce482d45783e0ea9aa986cafd5961de5f490068fd6c7d737b78b4366a3ff579",
 )
+# This is the "new" toolchain registration approach.
+register_toolchains("//bazel/toolchain/muntjac-baremetal:muntjac_baremetal")
 
 
 git_repository(
