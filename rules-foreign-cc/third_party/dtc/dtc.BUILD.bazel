@@ -1,0 +1,78 @@
+# The BUILD.bazel file inserted into the @dtc external repo.
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "make")
+filegroup(
+    name = "all_files",
+    srcs = glob(["**"]),
+)
+make(
+  # A quick reminder for how this rule works, since this is not documented
+  # anywhere.  The `make` rule runs GNU make in the current directory. You
+  # can also add a BUILD file into an external repository, as is done here.
+  # Your mission here is to configure bazel to run the `make` command with
+  # correct parameters, and to extract the compilation artifacts into
+  # build targets.  A lot of this mechanism works by convention, so you will
+  # have to ensure that the invocation upholds this convention under the hood.
+  # This is easier said than done, because bazel will helpfully *not* print
+  # useful output in case of errors, and you must make do with --subcommands
+  # and --sandbox_debug to figure out what may be wrong.
+  #
+  # The `make` build rule wants to compile the code in one directory, and
+  # have you install the artifacts into `$INSTALLDIR`.  All references to
+  # build artifacts will be relative to `$INSTALLDIR`. This means that to
+  # have `bazel` recognize that your rule built something, you must do
+  # an equivalent of `make install`, and make sure that the target dir of
+  # your installation is `$INSTALLDIR`.  When using `autoconf`, this is usually
+  # done by adding a command line param `--prefix=$$INSTALLDIR$$`.  Some
+  # Makefiles have equivalent commands, such as 
+  # `make PREFIX=$$INSTALLDIR$$ install`. Whatever the method may be, it is
+  # your responsibility to ensure that this happens. Otherwise bazel will
+  # error out.
+  #
+  # Bazel will expect all executable output to end up in `$INSTALLDIR/bin`,
+  # all libraries to end up in `$INSTALLDIR/lib`, all include files to end
+  # up in `$INSTALLDIR/include`.  These default settings can be changed, but
+  # the more "standard" your makefile is, the less you need to customize.
+  #
+  # The library name will determine where your output will get
+  # generated. In this case, for this external repository, output will go
+  # to:
+  #   `<buildroot>/external/dtc/libdtc`
+  # i.e. in this case your `$INSTALLDIR` will have that value.
+  name = "libdtc",
+  targets = [
+    # "Modern" make rule authors hide the make command lines. `V=1` turns this
+    # off, so you can actually see what the error is if it happens.
+    "V=1 " +
+    # For this rule to work, you must execute an equivalent of `make install`.
+    # This in turn means that not all make files would work out of the box.
+    # Make install will copy to `$INSTALLDIR`, which will be named after the
+    # external repository and this target name:
+    # `external/<repo_name>/<target_name>`.
+    "PREFIX=$$INSTALLDIR$$ " +
+    # If you need to modify the default value of a make variable, you can do it
+    # the standard make way:
+    "WARNINGS=\"-Wall -Wpointer-arith -Wcast-qual -Wnested-externs " +
+    "-Wsign-compare -Wstrict-prototypes -Wmissing-prototypes " +
+    "-Wredundant-decls -Wshadow -Wwrite-strings\" " +
+    # Don't forget the actual make target name. It must be `install` or some
+    # equivalent, for bazel to be able to find the resulting files after
+    # compilation.
+    " install",
+  ],
+  lib_source = ":all_files",
+  # Similar situation is with binaries, except it is now:
+  # `$INSTALL_DIR/<out_bin_dir>/dtc`. The default is `out_bin_dir=bin`
+  # The individual binaries will be made available in output groups, each
+  # group named after the respective binary.
+  out_binaries = [ "dtc", "fdtdump", ],
+  visibility = ["//visibility:public"],
+)
+# Here is how to extract a binary file named `dtc` from the compilation above,
+# and make it available as a target.
+filegroup(
+    name = "dtc",
+    srcs = [":libdtc" ],
+    # This part is important.
+    output_group = "dtc",
+    visibility = ["//visibility:public"],
+)
