@@ -1,0 +1,29 @@
+load(
+    "@pypi//:requirements.bzl",
+    "requirement",
+    "data_requirement",
+    "dist_info_requirement",
+    "entry_point",
+)
+load("@rules_python//python:defs.bzl", "py_binary", "py_test")
+load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+
+py_binary(
+  name = "main",
+  srcs = ["main.py"],
+  deps = ["//calculator:calculator",
+          requirement("Flask"),
+  ]
+)
+
+alias(
+    name = "yamlint",
+    actual = entry_point("yamlint")
+)
+
+compile_pip_requirements(
+    name = "requirements",
+    extra_args = ["--allow-unsafe"],
+    requirements_in = "requirements.in",
+    requirements_txt = "requirements_lock.txt",
+)

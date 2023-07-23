@@ -1,0 +1,5 @@
+Flask==2.0.2
+itsdangerous
+Jinja2
+click
+Werkzeug
