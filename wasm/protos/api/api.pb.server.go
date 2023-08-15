@@ -1,0 +1,1 @@
+/home/filmil/code/bazel-experiments/wasm/bazel-bin/protos/api/api_go_proto_/github.com/grahamjenson/bazel-golang-wasm-proto/protos/api/api.pb.server.go
