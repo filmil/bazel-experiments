@@ -1,0 +1,9 @@
+cc_binary(
+    name = "hello",
+    srcs = [
+        "hello.cc",
+        # Note that by default hello.h is not included in hello.cc but is still
+        # in srcs.
+        "hello.h",
+    ],
+)
