@@ -1,0 +1,13 @@
+cc_library(
+    name = "hello_lib",
+    srcs = [
+        "hello.cc",
+    ],
+    # Note that by default hello.h is not included in hello.cc but is still
+    # in srcs.
+    additional_compiler_inputs = [ "hello.h" ],
+)
+cc_binary(
+    name = "hello",
+    deps = [ ":hello_lib" ]
+)
