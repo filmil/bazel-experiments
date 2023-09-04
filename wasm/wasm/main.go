@@ -19,26 +19,32 @@ var (
 
 type Manager struct {
 	app.Compo
+
+	isLoggedIn bool
 }
+
+const (
+	clientID     = `841378387526-qn3965fuan6b08os2pf33ul3lqr800dn.apps.googleusercontent.com`
+	callbackName = "sigCallback"
+)
 
 func (m *Manager) Render() app.UI {
 	return app.Main().Body(
 		app.Hr(),
-		app.Span().Text("Hi!"),
+		app.Span().Text(fmt.Sprintf("Hi! isLoggedIn: %v", m.isLoggedIn)),
+		app.Hr(),
 		app.Div().
 			ID("g_id_onload").
-			DataSet(
-				"client_id",
-				"841378387526-qn3965fuan6b08os2pf33ul3lqr800dn.apps.googleusercontent.com").
-			DataSet("login_uri", "https://localhost:7000").
+			DataSet("client_id", clientID).
+			DataSet("context", "signin").
+			DataSet("callback", callbackName).
 			DataSet("auto_prompt", "true"),
 		app.Div().
 			Class("g_id_signin").
 			DataSet("type", "standard").
-			DataSet("size", "large").
+			DataSet("shape", "rectangular").
 			DataSet("theme", "outline").
-			DataSet("text", "sign_in_with").
-			DataSet("callback", "OnSuccess").
+			DataSet("text", "signin").
 			DataSet("logo_alignment", "left"),
 		app.Hr(),
 	)
@@ -51,7 +57,9 @@ type Header struct {
 
 func main() {
 	app.RouteFunc("/", func() app.Composer {
-		return &Manager{}
+		m := Manager{}
+		InstallJSFunc(&m)
+		return &m
 	})
 	app.RunWhenOnBrowser()
 	flag.Parse()
@@ -67,6 +75,14 @@ func main() {
 		Styles: []string{"/web/bootstrap.css"},
 		Icon: app.Icon{
 			Default: "/web/icon.png",
+		},
+		RawHeaders: []string{
+			`<script src="https://accounts.google.com/gsi/client" async defer></script>`,
+			`<script>
+				window.sigCallback = () => {
+					console.log("alert!")
+				}
+			</script>`,
 		},
 	}
 

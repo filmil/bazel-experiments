@@ -8,10 +8,28 @@ filegroup(name = "files",
     visibility = ["//visibility:public"],
 )
 
+filegroup(name = "wasm_files",
+    srcs = [
+        "func_wasm.go",
+    ],
+
+    visibility = ["//visibility:public"],
+)
+
+filegroup(name = "host_files",
+    srcs = [
+        "func_host.go",
+    ],
+
+    visibility = ["//visibility:public"],
+)
+
+
 go_library(
     name = "go_default_library",
     srcs = [
         ":files",
+        ":wasm_files",
     ],
     importpath = "github.com/grahamjenson/bazel-golang-wasm-proto/wasm",
     visibility = ["//visibility:private"],
