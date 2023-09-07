@@ -12,6 +12,7 @@ import (
 
 	"github.com/maxence-charriere/go-app/v9/pkg/app"
 	"golang.org/x/oauth2"
+	_ "golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
 )
