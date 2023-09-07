@@ -1,5 +1,5 @@
 filegroup(
     name = "icon",
-    srcs = [ "icon.png" ],
+    srcs = ["icon.png"],
     visibility = ["//visibility:public"],
 )

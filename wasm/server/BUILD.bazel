@@ -2,13 +2,9 @@ load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 
 go_library(
     name = "go_default_library",
-    srcs = ["//wasm:files", "//wasm:host_files"],
-    importpath = "github.com/grahamjenson/bazel-golang-wasm-proto",
+    srcs = ["func_host.go"],
+    importpath = "github.com/grahamjenson/bazel-golang-wasm-proto/server",
     visibility = ["//visibility:private"],
-    deps = [
-        "//protos/api:go_default_library",
-        "@com_github_maxence_charriere_go_app_v9//pkg/app:go_default_library",
-    ],
 )
 
 go_binary(
@@ -19,11 +15,11 @@ go_binary(
         "--icon-path=$(location //static:icon)",
     ],
     data = [
-        "//wasm:app.wasm",
         "//static:icon",
+        "//wasm:app.wasm",
         "@com_github_bootstrap//file:bootstrap.css",
         "@com_github_ec2instances//file:instances.json",
     ],
-    embed = [":go_default_library"],
+    embed = ["//wasm:go_default_library"],
     visibility = ["//visibility:public"],
 )

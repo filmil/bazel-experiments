@@ -6,8 +6,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
+	"strconv"
+	"time"
 
 	"github.com/maxence-charriere/go-app/v9/pkg/app"
+	"golang.org/x/oauth2"
+	"google.golang.org/api/option"
+	"google.golang.org/api/sheets/v4"
 )
 
 var (
@@ -20,34 +26,74 @@ var (
 type Manager struct {
 	app.Compo
 
-	isLoggedIn bool
+	Token string
 }
 
 const (
 	clientID     = `841378387526-qn3965fuan6b08os2pf33ul3lqr800dn.apps.googleusercontent.com`
 	callbackName = "sigCallback"
+
+	httpURL = `https://accounts.google.com/o/oauth2/v2/auth`
+
+	sheetScope = `https://www.googleapis.com/auth/spreadsheets.readonly`
+
+	redirURL = `http://localhost:7000/foobar`
+	//redirURL = `urn:ietf:wg:oauth:2.0:oob`
+
+	sheet = `1C9FSpbNYMX-7MsP5IDhmmIMqCDoHwClvY6dVWMIk1ic`
 )
 
 func (m *Manager) Render() app.UI {
+	u, _ := url.Parse(httpURL)
+	q := u.Query()
+	q.Set("client_id", clientID)
+	q.Set("response_type", "token")
+	q.Set("scope", sheetScope)
+	q.Set("state", "imsayingsomething")
+	q.Set("redirect_uri", redirURL)
+	u.RawQuery = q.Encode()
 	return app.Main().Body(
 		app.Hr(),
-		app.Span().Text(fmt.Sprintf("Hi! isLoggedIn: %v", m.isLoggedIn)),
-		app.Hr(),
-		app.Div().
-			ID("g_id_onload").
-			DataSet("client_id", clientID).
-			DataSet("context", "signin").
-			DataSet("callback", callbackName).
-			DataSet("auto_prompt", "true"),
-		app.Div().
-			Class("g_id_signin").
-			DataSet("type", "standard").
-			DataSet("shape", "rectangular").
-			DataSet("theme", "outline").
-			DataSet("text", "signin").
-			DataSet("logo_alignment", "left"),
+		app.If(
+			m.Token == "",
+			app.A().
+				Text("Log In").
+				Href(u.String()),
+		).Else(
+			app.A().
+				Text(fmt.Sprintf("Logged In: %v", m.Token)),
+		),
 		app.Hr(),
 	)
+}
+
+func (m *Manager) OnMount(ctx app.Context) {
+	ctx.ObserveState("/login").Value(&m.Token)
+	t := m.Token
+	config := &oauth2.Config{}
+	sheetsService, err := sheets.NewService(ctx, option.WithTokenSource(config.TokenSource(ctx, t)))
+	if err != nil {
+		log.Printf("this is an error: %v", err)
+	}
+}
+
+type Login struct {
+	app.Compo
+}
+
+func (l *Login) Render() app.UI {
+	return app.Main()
+}
+
+func (l *Login) OnMount(ctx app.Context) {
+	w := app.Window()
+	v, _ := url.ParseQuery(w.URL().Fragment)
+	re, _ := strconv.Atoi(v.Get("expires_in"))
+	exp := time.Duration(re) * time.Second
+	t := v.Get("access_token")
+	log.Printf("OnMount: re: %v, t: %v", re, t)
+	ctx.SetState("/login", t, app.ExpiresIn(exp))
+	ctx.Navigate("/")
 }
 
 type Header struct {
@@ -56,10 +102,11 @@ type Header struct {
 }
 
 func main() {
+	app.RouteFunc("/foobar", func() app.Composer {
+		return &Login{}
+	})
 	app.RouteFunc("/", func() app.Composer {
-		m := Manager{}
-		InstallJSFunc(&m)
-		return &m
+		return &Manager{}
 	})
 	app.RunWhenOnBrowser()
 	flag.Parse()
@@ -75,14 +122,6 @@ func main() {
 		Styles: []string{"/web/bootstrap.css"},
 		Icon: app.Icon{
 			Default: "/web/icon.png",
-		},
-		RawHeaders: []string{
-			`<script src="https://accounts.google.com/gsi/client" async defer></script>`,
-			`<script>
-				window.sigCallback = () => {
-					console.log("alert!")
-				}
-			</script>`,
 		},
 	}
 

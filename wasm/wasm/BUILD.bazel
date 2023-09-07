@@ -1,40 +1,35 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 
-filegroup(name = "files",
+filegroup(
+    name = "files",
     srcs = [
         "main.go",
     ],
-
     visibility = ["//visibility:public"],
 )
 
-filegroup(name = "wasm_files",
+filegroup(
+    name = "wasm_files",
     srcs = [
         "func_wasm.go",
     ],
-
     visibility = ["//visibility:public"],
 )
-
-filegroup(name = "host_files",
-    srcs = [
-        "func_host.go",
-    ],
-
-    visibility = ["//visibility:public"],
-)
-
 
 go_library(
     name = "go_default_library",
     srcs = [
-        ":files",
-        ":wasm_files",
+        "func_wasm.go",
+        "main.go",
     ],
     importpath = "github.com/grahamjenson/bazel-golang-wasm-proto/wasm",
-    visibility = ["//visibility:private"],
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
     deps = [
         "@com_github_maxence_charriere_go_app_v9//pkg/app:go_default_library",
+        "@org_golang_google_api//option:go_default_library",
+        "@org_golang_google_api//sheets/v4:go_default_library",
+        "@org_golang_x_oauth2//:go_default_library",
     ],
 )
 
