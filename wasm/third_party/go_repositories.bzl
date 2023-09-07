@@ -251,8 +251,8 @@ def go_repositories():
     go_repository(
         name = "com_github_maxence_charriere_go_app_v9",
         importpath = "github.com/maxence-charriere/go-app/v9",
-        sum = "h1:gDlROy31hAUg6SoOcD9joIKApL3AE5pWIEyEMTLgagQ=",
-        version = "v9.7.3",
+        sum = "h1:rDfLNvxIKXyjpRS76P45kn9Xj8IumwfoqpsEJYxfd+E=",
+        version = "v9.8.0",
     )
     go_repository(
         name = "com_github_pkg_errors",
@@ -406,8 +406,8 @@ def go_repositories():
     go_repository(
         name = "org_golang_google_api",
         importpath = "google.golang.org/api",
-        sum = "h1:QrKX6uNvzJLr0Fd3vWVqcyrcmFoYi036VUAsZbiF4+s=",
-        version = "v0.137.0",
+        sum = "h1:K/tVp05MxNVbHShRw9m7e9VJGdagNeTdMzqPH7AUqr0=",
+        version = "v0.138.0",
     )
     go_repository(
         name = "org_golang_google_appengine",
