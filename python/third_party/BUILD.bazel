@@ -2,7 +2,10 @@ load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 
 compile_pip_requirements(
     name = "requirements",
-    extra_args = ["--allow-unsafe"],
+    extra_args = ["--allow-unsafe", "--resolver=backtracking"],
     requirements_in = "requirements.in",
     requirements_txt = "requirements_lock.txt",
+    # The requirements generator is broken, as it depends on system python even
+    # if a hermetic python installation is used.
+    tags = ["manual"],
 )
