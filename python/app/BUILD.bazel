@@ -6,7 +6,6 @@ load(
     "entry_point",
 )
 load("@rules_python//python:defs.bzl", "py_binary", "py_test")
-load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 
 py_binary(
   name = "main",
@@ -17,13 +16,7 @@ py_binary(
 )
 
 alias(
-    name = "yamlint",
-    actual = entry_point("yamlint")
+    name = "yamllint",
+    actual = entry_point("yamllint")
 )
 
-compile_pip_requirements(
-    name = "requirements",
-    extra_args = ["--allow-unsafe"],
-    requirements_in = "requirements.in",
-    requirements_txt = "requirements_lock.txt",
-)
