@@ -55,7 +55,6 @@ def go_repositories():
         sum = "h1:ta993UF76GwbvJcIo3Y68y/M3WxlpEHPWIGDkJYwzJI=",
         version = "v0.3.4",
     )
-
     go_repository(
         name = "com_github_cncf_udpa_go",
         importpath = "github.com/cncf/udpa/go",
@@ -99,7 +98,6 @@ def go_repositories():
         sum = "h1:/d3pCKDPWNnvIWe0vVUpNP32qc8U3PDVxySP/y360qE=",
         version = "v1.1.0",
     )
-
     go_repository(
         name = "com_github_golang_groupcache",
         importpath = "github.com/golang/groupcache",
@@ -124,7 +122,6 @@ def go_repositories():
         sum = "h1:KhyjKVUg7Usr/dYsdSqoFveMYd5ko72D+zANwlG1mmg=",
         version = "v1.5.3",
     )
-
     go_repository(
         name = "com_github_gomarkdown_markdown",
         importpath = "github.com/gomarkdown/markdown",
@@ -247,7 +244,6 @@ def go_repositories():
         sum = "h1:DgqBrh0Q/JGHXDZjJaYCWKD/EXLczxplIC0JeElY2iU=",
         version = "v0.6.2",
     )
-
     go_repository(
         name = "com_github_maxence_charriere_go_app_v9",
         importpath = "github.com/maxence-charriere/go-app/v9",
@@ -309,7 +305,6 @@ def go_repositories():
         sum = "h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKsk=",
         version = "v1.8.1",
     )
-
     go_repository(
         name = "com_github_yuin_goldmark",
         importpath = "github.com/yuin/goldmark",
@@ -372,7 +367,6 @@ def go_repositories():
         sum = "h1:fvjTMHxHEw/mxHbtzPi3JCcKXQRAnQTBRo6YCJSVHKI=",
         version = "v2.2.3",
     )
-
     go_repository(
         name = "in_gopkg_yaml_v3",
         importpath = "gopkg.in/yaml.v3",
@@ -431,7 +425,6 @@ def go_repositories():
         sum = "h1:kfzNeI/klCGD2YPMUlaGNT3pxvYfga7smW3Vth8Zsiw=",
         version = "v1.57.0",
     )
-
     go_repository(
         name = "org_golang_google_protobuf",
         importpath = "google.golang.org/protobuf",
@@ -485,7 +478,6 @@ def go_repositories():
         sum = "h1:ugBLEUaxABaB5AJqW9enI0ACdci2RUd4eP51NTBvuJ8=",
         version = "v0.15.0",
     )
-
     go_repository(
         name = "org_golang_x_oauth2",
         importpath = "golang.org/x/oauth2",
@@ -504,7 +496,6 @@ def go_repositories():
         sum = "h1:CM0HF96J0hcLAwsHPJZjfdNzs0gftsLfgKt57wWHJ0o=",
         version = "v0.12.0",
     )
-
     go_repository(
         name = "org_golang_x_term",
         importpath = "golang.org/x/term",
@@ -530,7 +521,6 @@ def go_repositories():
         sum = "h1:BOw41kyTf3PuCW1pVQf8+Cyg8pMlkYB1oo9iJ6D/lKM=",
         version = "v0.6.0",
     )
-
     go_repository(
         name = "org_golang_x_xerrors",
         importpath = "golang.org/x/xerrors",
