@@ -21,7 +21,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build
-        run: "cd test-rules-foreign-cc && bazel build //..."
+        run: "cd rules-foreign-cc && bazel build //..."
       - name: Test
-        run: "cd test-rules-foreign-cc && bazel test //..."
+        run: "cd rules-foreign-cc && bazel test //..."
 
