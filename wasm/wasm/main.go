@@ -71,8 +71,9 @@ func (m *Manager) Render() app.UI {
 func (m *Manager) OnMount(ctx app.Context) {
 	ctx.ObserveState("/login").Value(&m.Token)
 	t := m.Token
+	tt := oauth2.Token{AccessToken: t}
 	config := &oauth2.Config{}
-	sheetsService, err := sheets.NewService(ctx, option.WithTokenSource(config.TokenSource(ctx, t)))
+	_, err := sheets.NewService(ctx, option.WithTokenSource(config.TokenSource(ctx, &tt)))
 	if err != nil {
 		log.Printf("this is an error: %v", err)
 	}

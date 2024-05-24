@@ -7,9 +7,14 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 # Rules
 ###
 
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+# rules_go 0.41.0 and bazel_gazelle 0.32.0 are required to avoid confusing
+# dependency issues.
+# See: https://github.com/bazelbuild/rules_go/issues/3625#issuecomment-1638545638
 http_archive(
     name = "io_bazel_rules_go",
-    sha256 = "278b7ff5a826f3dc10f04feaf0b70d48b68748ccd512d7f98bf442077f043fe3",
+    integrity = "sha256-J4t/9agm89wQ8E/q8LcNSLaHSMzVEtf5i/RCB38EP+M=",
     urls = [
         "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.41.0/rules_go-v0.41.0.zip",
         "https://github.com/bazelbuild/rules_go/releases/download/v0.41.0/rules_go-v0.41.0.zip",
@@ -18,24 +23,46 @@ http_archive(
 
 http_archive(
     name = "bazel_gazelle",
-    integrity = "sha256-MpOL2hbmcABjA1R5Bj2dJMYO2o15/Uc5Vj9Q0zHLMgk=",
+    integrity = "sha256-KSGPjgzr5YNkPL+Tyub5cb6KJITNz6HkUFdljfjVQAI=",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.35.0/bazel-gazelle-v0.35.0.tar.gz",
-        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.35.0/bazel-gazelle-v0.35.0.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.32.0/bazel-gazelle-v0.32.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.32.0/bazel-gazelle-v0.32.0.tar.gz",
     ],
 )
 
-git_repository(
-    name = "com_google_protobuf",
-    commit = "21edc3b26fc80771baea78d8bd8df1285b12cae2",
-    remote = "https://github.com/protocolbuffers/protobuf",
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "rules_proto",
+    sha256 = "303e86e722a520f6f326a50b41cfc16b98fe6d1955ce46642a5b7a67c11c0f5d",
+    strip_prefix = "rules_proto-6.0.0",
+    url = "https://github.com/bazelbuild/rules_proto/releases/download/6.0.0/rules_proto-6.0.0.tar.gz",
 )
+
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies")
+rules_proto_dependencies()
+
+load("@rules_proto//proto:toolchains.bzl", "rules_proto_toolchains")
+rules_proto_toolchains()
+
+http_archive(
+    name = "com_google_protobuf",
+    sha256 = "d0f5f605d0d656007ce6c8b5a82df3037e1d8fe8b121ed42e536f569dec16113",
+    strip_prefix = "protobuf-3.14.0",
+    urls = [
+        "https://mirror.bazel.build/github.com/protocolbuffers/protobuf/archive/v3.14.0.tar.gz",
+        "https://github.com/protocolbuffers/protobuf/archive/v3.14.0.tar.gz",
+    ],
+)
+
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+protobuf_deps()
 
 http_archive(
     name = "rules_proto_grpc",
-    sha256 = "5f0f2fc0199810c65a2de148a52ba0aff14d631d4e8202f41aff6a9d590a471b",
-    strip_prefix = "rules_proto_grpc-1.0.2",
-    urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/archive/1.0.2.tar.gz"],
+    integrity = "sha256-wNcY9NiSxSQCVQTmelv+gzYLOpguZUvHH+11FOuKyK0=",
+    strip_prefix = "rules_proto_grpc-4.6.0",
+    urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/archive/4.6.0.tar.gz"],
 )
 
 ###
@@ -58,16 +85,51 @@ http_archive(
 )
 
 ###
-# Bootrap
+# Bootstrap
 ###
+load("@bazel_features//:deps.bzl", "bazel_features_deps")
+bazel_features_deps()
 
 load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
+
+# https://github.com/bazelbuild/rules_go/issues/3624#issuecomment-1736913040: gah!
+go_repository(
+    name = "org_golang_x_oauth2",
+    importpath = "golang.org/x/oauth2",
+    sum = "h1:smVPGxink+n1ZI5pkQa8y6fZT0RW0MgCO5bFpepy4B4=",
+    version = "v0.12.0",
+)
 
 go_rules_dependencies()
 
 go_register_toolchains(go_version = "1.21.5")
 
-load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
+
+# https://github.com/bazelbuild/rules_go/issues/3625: gah!
+http_archive(
+    name = "googleapis",
+    sha256 = "78aae8879967e273044bc786e691d9a16db385bd137454e80cd0b53476adfc2d",
+    strip_prefix = "googleapis-c09efadc6785560333d967f0bd40f1d1c3232088",
+    urls = ["https://github.com/googleapis/googleapis/archive/c09efadc6785560333d967f0bd40f1d1c3232088.tar.gz"],
+)
+
+load("@googleapis//:repository_rules.bzl", "switched_rules_by_language")
+
+switched_rules_by_language(
+    name = "com_google_googleapis_imports",
+)
+
+go_repository(
+    name = "com_github_googleapis_gax_go_v2",
+    build_directives = [
+        "gazelle:resolve proto go google/rpc/code.proto @org_golang_google_genproto_googleapis_rpc//code",  # keep
+        "gazelle:resolve proto proto google/rpc/code.proto @googleapis//google/rpc:code_proto",  # keep
+    ],
+    importpath = "github.com/googleapis/gax-go/v2",
+    sum = "h1:A+gCJKdRfqXkr+BIRGtZLibNXf0m1f9E4HG56etFpas=",
+    version = "v2.12.0",
+)
 
 go_repository(
     name = "com_github_antihax_optional",
@@ -180,14 +242,6 @@ gazelle_dependencies()
 load("//third_party:go_repositories.bzl", "go_repositories")
 
 go_repositories()
-
-###
-# Protobuf
-###
-
-load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
-
-protobuf_deps()
 
 ###
 # GRPC
