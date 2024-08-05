@@ -73,3 +73,15 @@ jobs:
       - name: Test
         run: "cd python && bazel test --test_output=errors //..."
 
+  test-riscv64-rust-baremetal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup bazel
+        uses: abhinavsingh/setup-bazel@v3
+        with:
+          version: 7.2.0
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: "cd python && bazel build //..."
+
