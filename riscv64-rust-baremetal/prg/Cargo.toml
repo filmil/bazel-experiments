@@ -1,0 +1,9 @@
+# This Cargo.toml can be used to work with rust binary as usual with cargo.
+
+[package]
+name = "my_program"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+bumpalo = "3.6"

@@ -1,0 +1,15 @@
+load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_doc")
+
+package(default_visibility = ["//visibility:public"])
+
+rust_binary(
+    name = "my_program",
+    edition = "2021",
+    srcs = ["src/main.rs"],
+    platform = "//build:platform",
+)
+
+rust_doc(
+    name = "docs",
+    crate = ":my_program",
+)

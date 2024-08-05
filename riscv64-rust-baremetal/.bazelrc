@@ -1,0 +1,10 @@
+# Create the file //user.bazelrc to add your own local bazel params.
+# It is ignored by git.
+try-import %workspace%/user.bazelrc
+
+# The flag below supposedly helps running the generator for rust-project.json,
+# but I haven't noticed that it does.
+
+build \
+    --repo_env=RULES_RUST_TOOLCHAIN_INCLUDE_RUSTC_SRCS=true \
+    --incompatible_enable_cc_toolchain_resolution

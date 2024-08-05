@@ -1,0 +1,95 @@
+workspace(name = "rust_bazel_examples")
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+git_repository(
+    name = "rules_riscv64_baremetal",
+    commit = "0eb8f7b32032b81b5011cecf15a29b4a8d365167",
+    remote = "https://github.com/filmil/bazel_rules_gcc_riscv64_baremetal"
+)
+
+# 1:
+load("@rules_riscv64_baremetal//:deps1.bzl", "deps_stage_1")
+deps_stage_1()
+
+# 2:
+load("@rules_riscv64_baremetal//:deps2.bzl", "deps_stage_2")
+deps_stage_2()
+
+# This must stay in WORKSPACE.
+load("@com_grail_bazel_toolchain//toolchain:deps.bzl", "bazel_toolchain_dependencies")
+bazel_toolchain_dependencies()
+
+load("@rules_riscv64_baremetal//:deps3.bzl", "deps_stage_3")
+deps_stage_3()
+
+# This is the "new" toolchain registration approach.
+register_toolchains("@rules_riscv64_baremetal//build/toolchain/muntjac-baremetal:muntjac_baremetal")
+
+#http_archive(
+    #name = "rules_rust",
+    #sha256 = "36ab8f9facae745c9c9c1b33d225623d976e78f2cc3f729b7973d8c20934ab95",
+    #urls = ["https://github.com/bazelbuild/rules_rust/releases/download/0.31.0/rules_rust-v0.31.0.tar.gz"],
+#)
+
+load("@rules_rust//rust:repositories.bzl", "rules_rust_dependencies", "rust_register_toolchains")
+
+rules_rust_dependencies()
+
+rust_register_toolchains(
+    edition = "2021",
+    versions = [ "1.79.0" ],
+    extra_target_triples = [
+        "riscv64gc-unknown-none-elf"
+    ],
+    extra_rustc_flags = {
+        "riscv64gc-unknown-none-elf": [
+            "-C", "link-arg=-nostartfiles",
+        ],
+    },
+    sha256s = {
+        "rustc-1.79.0-x86_64-unknown-linux-gnu.tar.xz": "a04cf42022d0a5faf01c31082bfb1dde9c38409f0ca6da90a3e40faa03e797ae", 
+        "clippy-1.79.0-x86_64-unknown-linux-gnu.tar.xz": "3fb282ee97626e4f25c4f6faac3997859b89f13983dd6fa111e25182dfcb91fa", 
+        "cargo-1.79.0-x86_64-unknown-linux-gnu.tar.xz": "07fcadd27b645ad58ff4dae5ef166fd730311bbae8f25f6640fe1bfd2a1f3c3c", 
+        "rustfmt-1.79.0-x86_64-unknown-linux-gnu.tar.xz": "4404d5e2881194a09d68888c45c21405e452b35418e04190caae1af108ea76df",
+        "llvm-tools-1.79.0-x86_64-unknown-linux-gnu.tar.xz": "3e4a9815d882bfb0cf4d4ec1e14181c44324bb3d04e851b9b5377b6a42b75eba",
+        "rust-std-1.79.0-riscv64gc-unknown-none-elf.tar.xz": "fa9da3f74fe7ca08406c68b8f967d5e6f6e89ae8703192f25d44f07c6a82de80",
+    },
+
+
+)
+
+
+######################################################################
+
+# Use to generate rust-project.json.
+# Use bazel run @rules_rust//tools/rust_analyzer:gen_rust_project
+
+######################################################################
+
+# This is how to generate new lock files.  At the project outset, you must
+#   (1) create the empty files `//third_party/cargo:Cargo.lock`, and
+#       `//third_party/cargo:Cargo.Bazel.lock`.
+#   (2) Run `env CARGO_BAZEL_REPIN=true bazel build //...` to initialize the
+#   lockfiles.
+#load("@rules_rust//crate_universe:defs.bzl", "crates_repository", "crate", "render_config")
+
+#crates_repository(
+    #name = "crate_index",
+    #cargo_lockfile = "//:Cargo.lock",
+    #lockfile = "//:Cargo.Bazel.lock",
+    #packages = {
+        ## Add any other crates you need here.
+        #"bumpalo": crate.spec(
+            #version = "3.6.1",
+        #),
+    #},
+    #render_config = render_config(
+        #default_package_name = ""
+    #),
+#)
+
+#load("@crate_index//:defs.bzl", "crate_repositories")
+
+#crate_repositories()
