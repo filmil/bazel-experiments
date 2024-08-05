@@ -1,3 +1,26 @@
+This is an example rust program built for an example embedded riscv64
+processor, built by Bazel.
+
+Try it out:
+
+```bash
+bazel build //prg:my_program
+```
+
+This will download all needed tools, configure them, and run a cross-compiler
+that will produce a binary that can run on a riscv64 processor in machine mode.
+
+```bash
+bazel build //prg:disasm
+```
+
+This will compile, but also disassemble the basic program.  View the result for
+example using:
+
+```
+cat bazel-bin/prg/disasm.S
+```
+
 ## Maintenance
 
 ### Generate rust-project.json

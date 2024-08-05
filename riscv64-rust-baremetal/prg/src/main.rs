@@ -10,5 +10,8 @@ fn panic(_info: &PanicInfo) -> ! {
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    loop {}
+    let mut i = 0u32;
+    loop {
+        i = i+ 1;
+    }
 }

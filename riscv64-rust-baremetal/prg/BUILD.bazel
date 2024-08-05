@@ -1,4 +1,5 @@
 load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_doc")
+load("@rules_riscv64_baremetal//build/bin:defs.bzl", "disasm")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -12,4 +13,9 @@ rust_binary(
 rust_doc(
     name = "docs",
     crate = ":my_program",
+)
+
+disasm(
+    name = "disasm",
+    src = ":my_program",
 )

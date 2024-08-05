@@ -3,9 +3,10 @@ workspace(name = "rust_bazel_examples")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
+# A GCC toolchain for bare metal riscv64. Also, some utilities.
 git_repository(
     name = "rules_riscv64_baremetal",
-    commit = "0eb8f7b32032b81b5011cecf15a29b4a8d365167",
+    commit = "c4c1b5bf4c44befed32cdc773963b2378392ae05",
     remote = "https://github.com/filmil/bazel_rules_gcc_riscv64_baremetal"
 )
 
@@ -27,12 +28,6 @@ deps_stage_3()
 # This is the "new" toolchain registration approach.
 register_toolchains("@rules_riscv64_baremetal//build/toolchain/muntjac-baremetal:muntjac_baremetal")
 
-#http_archive(
-    #name = "rules_rust",
-    #sha256 = "36ab8f9facae745c9c9c1b33d225623d976e78f2cc3f729b7973d8c20934ab95",
-    #urls = ["https://github.com/bazelbuild/rules_rust/releases/download/0.31.0/rules_rust-v0.31.0.tar.gz"],
-#)
-
 load("@rules_rust//rust:repositories.bzl", "rules_rust_dependencies", "rust_register_toolchains")
 
 rules_rust_dependencies()
@@ -45,6 +40,8 @@ rust_register_toolchains(
     ],
     extra_rustc_flags = {
         "riscv64gc-unknown-none-elf": [
+            # Tell the linker not to link the C runtime library `crt0.o`.
+            # Needed because rust uses the C toolchain for its linker.
             "-C", "link-arg=-nostartfiles",
         ],
     },
