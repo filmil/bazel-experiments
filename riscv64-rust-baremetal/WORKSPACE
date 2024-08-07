@@ -1,32 +1,30 @@
-workspace(name = "rust_bazel_examples")
-
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 # A GCC toolchain for bare metal riscv64. Also, some utilities.
 git_repository(
-    name = "rules_riscv64_baremetal",
+    name = "rules_riscv64_gcc_baremetal",
     commit = "c4c1b5bf4c44befed32cdc773963b2378392ae05",
     remote = "https://github.com/filmil/bazel_rules_gcc_riscv64_baremetal"
 )
 
 # 1:
-load("@rules_riscv64_baremetal//:deps1.bzl", "deps_stage_1")
+load("@rules_riscv64_gcc_baremetal//:deps1.bzl", "deps_stage_1")
 deps_stage_1()
 
 # 2:
-load("@rules_riscv64_baremetal//:deps2.bzl", "deps_stage_2")
+load("@rules_riscv64_gcc_baremetal//:deps2.bzl", "deps_stage_2")
 deps_stage_2()
 
 # This must stay in WORKSPACE.
 load("@com_grail_bazel_toolchain//toolchain:deps.bzl", "bazel_toolchain_dependencies")
 bazel_toolchain_dependencies()
 
-load("@rules_riscv64_baremetal//:deps3.bzl", "deps_stage_3")
+load("@rules_riscv64_gcc_baremetal//:deps3.bzl", "deps_stage_3")
 deps_stage_3()
 
 # This is the "new" toolchain registration approach.
-register_toolchains("@rules_riscv64_baremetal//build/toolchain/muntjac-baremetal:muntjac_baremetal")
+register_toolchains("@rules_riscv64_gcc_baremetal//build/toolchain/muntjac-baremetal:muntjac_baremetal")
 
 load("@rules_rust//rust:repositories.bzl", "rules_rust_dependencies", "rust_register_toolchains")
 
@@ -43,6 +41,7 @@ rust_register_toolchains(
             # Tell the linker not to link the C runtime library `crt0.o`.
             # Needed because rust uses the C toolchain for its linker.
             "-C", "link-arg=-nostartfiles",
+            "-C", "relocation-model=pic",
         ],
     },
     sha256s = {

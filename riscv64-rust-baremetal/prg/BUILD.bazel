@@ -1,5 +1,5 @@
 load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_doc")
-load("@rules_riscv64_baremetal//build/bin:defs.bzl", "disasm")
+load("@rules_riscv64_gcc_baremetal//build/bin:defs.bzl", "disasm")
 
 package(default_visibility = ["//visibility:public"])
 

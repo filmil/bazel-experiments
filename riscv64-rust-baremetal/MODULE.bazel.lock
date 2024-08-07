@@ -661,7 +661,7 @@
     "@@rules_rust~//rust:extensions.bzl%rust": {
       "general": {
         "bzlTransitiveDigest": "I3KD/tWxmrJras+oNCHwVLc55nIxmythTlYkBkmH1yk=",
-        "usagesDigest": "aUF7ylH8U6ZqsJLae9xmt8UPSe9gzisMOnNcxwDdSYo=",
+        "usagesDigest": "+SG5VcyUh88UxfdCOg5+N942hq6F4p/iUcFa6aUHmss=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -13217,7 +13217,7 @@
     "@@toolchains_riscv_gnu~//:extensions.bzl%riscv_toolchain": {
       "general": {
         "bzlTransitiveDigest": "zXw/14iyddLOApDRULXFl73VCp1RhssxjbHORAwD2vo=",
-        "usagesDigest": "NCyG3SiRpPVLEjvnH8BnQkadhNjJY9iE6jPU2g/8IvM=",
+        "usagesDigest": "WtP7HOqDXSnYzS/49g9wfhTDTkfSJg+1M54bgeYBlCg=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},

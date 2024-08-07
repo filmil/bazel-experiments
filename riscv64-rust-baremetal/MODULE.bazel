@@ -1,5 +1,5 @@
 module(
-    name = "prg",
+    name = "riscv64-rust-baremetal",
     version = "0.0.0",
 
 
