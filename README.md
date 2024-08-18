@@ -7,3 +7,4 @@ At the moment there are the following experiments:
 * [`rebuild`](rebuild): a bug report test
 * [`rv5-tools`](rv5-tools): an example cross-compilation of a RISC-V "hello world" binary
 * [`python`](python): an example hermetic python app build
+* [`riscv64-rust-baremetal`](riscv64-rust-baremetal): an example of building an embedded binary in rust, using bazel as a build system.
