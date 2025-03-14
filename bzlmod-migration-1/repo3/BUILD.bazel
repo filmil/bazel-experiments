@@ -1,0 +1,12 @@
+sh_binary(
+    name = "script",
+    srcs = [
+        "script.sh",
+    ],
+    args = [
+        "$(location @repo2//:script)",
+    ],
+    data = [
+        "@repo2//:script",
+    ],
+)

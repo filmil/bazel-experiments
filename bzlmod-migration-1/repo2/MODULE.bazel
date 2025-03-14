@@ -1,0 +1,14 @@
+module(
+    name = "repo2",
+    version = "0.0",
+)
+
+# This should be bazel_dep, but we use `local_repository` on purpose
+# for the example.
+local_repository = use_repo_rule(
+    "@bazel_tools//tools/build_defs/repo:local.bzl",
+    "local_repository")
+local_repository(
+    name = "repo1",
+    path = "../repo1",
+)

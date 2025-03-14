@@ -1,0 +1,16 @@
+sh_binary(
+    name = "script",
+    srcs = [
+        "script.sh",
+    ],
+    args = [
+        "$(location @repo1//:script)",
+    ],
+    data = [
+        "@repo1//:script",
+        "@bazel_tools//tools/bash/runfiles",
+    ],
+    visibility = [
+        "//visibility:public",
+    ]
+)

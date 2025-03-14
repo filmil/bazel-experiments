@@ -1,0 +1,7 @@
+sh_binary(
+    name = "script",
+    srcs = [
+        "script.sh",
+    ],
+    visibility = ["//visibility:public"],
+)
