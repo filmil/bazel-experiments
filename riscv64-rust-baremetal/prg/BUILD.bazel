@@ -1,5 +1,6 @@
 load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_doc")
 load("@rules_riscv64_gcc_baremetal//build/bin:defs.bzl", "disasm")
+load("@aspect_bazel_lib//lib:transitions.bzl", "platform_transition_binary")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -19,3 +20,11 @@ disasm(
     name = "disasm",
     src = ":my_program",
 )
+
+# Build the same thing as ":my_program", except for another target platform.
+platform_transition_binary(
+    name = "transition",
+    binary = ":my_program",
+    target_platform = "//build:platform2",
+)
+

@@ -6,3 +6,12 @@ platform(
     ],
     visibility = [ "//visibility:public" ],
 )
+
+platform(
+    name = "platform2",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    visibility = [ "//visibility:public" ],
+)
