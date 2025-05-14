@@ -83,7 +83,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build
-        run: "cd python && bazel build //..."
+        run: "cd riscv64-rust-baremetal && bazel build //..."
 
   test-musl:
     runs-on: ubuntu-latest
