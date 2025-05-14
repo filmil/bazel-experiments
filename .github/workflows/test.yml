@@ -85,3 +85,15 @@ jobs:
       - name: Build
         run: "cd python && bazel build //..."
 
+  test-musl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup bazel
+        uses: abhinavsingh/setup-bazel@v3
+        with:
+          version: 8.1.0
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: "cd musl && bazel build //..."
+
