@@ -1,5 +1,7 @@
 # Experiments with bazel build rules [![Test status](https://github.com/filmil/bazel-experiments/workflows/Test/badge.svg)](https://github.com/filmil/bazel-experiments/workflows/Test/badge.svg)
 
+This repository contains a collection of experiments showcasing various aspects of the Bazel build system. Each experiment is a self-contained example demonstrating a specific feature or use case.
+
 At the moment there are the following experiments:
 
 * [`wasm`](wasm): an example go wasm application built with bazel
@@ -13,3 +15,16 @@ At the moment there are the following experiments:
   embedded binary in rust, using bazel as a build system.
 * [`musl`](musl): example build of a static C++ binary linked against musl
   instead of glibc.
+
+## Contributing
+
+Contributions are welcome! If you have an idea for a new experiment or an improvement to an existing one, please feel free to:
+
+1.  Fork the repository.
+2.  Create a new branch for your changes.
+3.  Make your changes, ensuring that each experiment remains self-contained and well-documented.
+4.  Submit a pull request.
+
+## License
+
+This project is licensed under the Apache License 2.0. See the `LICENSE` file for more details.

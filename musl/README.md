@@ -1,69 +1,93 @@
-# [musl][mm] based GCC toolchain: fully static C++ binaries
+# Fully Static C++ Binaries with Musl
+
+[![musl_logo](https://musl.libc.org/logo.png)](https://musl.libc.org/)
+
+**[Musl][mm] is a lightweight, fast, and simple C library (libc) designed to be statically linked.**
 
 [mm]: https://en.wikipedia.org/wiki/Musl
 
-In this example, we use the externally contributed musl C++ toolchain rule set
-to build a fully static binary. The binary is linked against the musl library
-because glibc is not compatible with static linking.  This is one of the bigger
-reasons to use musl instead of glibc.
+## Goal of this Experiment
 
-Here's what happens when we compile the binary. The flag `--subcommands` is added
-to provide insight into what happens under the hood.
+The primary goal of this experiment is to demonstrate how to build a **fully static C++ executable** using Bazel, by linking against the `musl` C library instead of the more common `glibc`. Static linking is particularly useful for creating portable binaries that have no runtime dependencies on system libraries.
+
+## Why Musl for Static Linking?
+
+Standard C libraries like `glibc` have licensing and technical complexities (e.g., with nss_witch, dlopen) that make true static linking problematic or not recommended. `musl` is designed from the ground up to support clean static linking, making it an excellent choice for producing self-contained binaries.
+
+## Prerequisites
+
+1.  **Bazel:** You need Bazel installed on your system.
+2.  **Musl Toolchain for Bazel:** This experiment relies on an external Bazel toolchain for `musl`. The necessary declarations (e.g., in `WORKSPACE` or `MODULE.bazel` and related `.bzl` files) must be set up to define and register a C++ toolchain that uses `musl` for linking. The example output below shows paths like `external/toolchains_musl++toolchains_musl+musl-1_2_3-platform-x86_64-unknown-linux-gnu-target-x86_64-linux-musl/`, indicating such a toolchain is in use.
+
+## How to Build
+
+To build the `hello` C++ binary:
+
+```bash
+bazel build //:hello
+```
+
+To see the detailed commands executed by Bazel during the build (useful for debugging or understanding the process), you can add the `--subcommands` flag:
+
+```bash
+bazel build //:hello --subcommands
+```
+
+**Example Build Output Snippets:**
+
+The build process will involve compiling `hello.cc` and then linking it. Key aspects of the linking step (as shown by `--subcommands` output) include:
+*   Invocation of a `musl-gcc` cross-compiler (e.g., `x86_64-linux-musl-gcc`).
+*   Use of flags like `-static` to ensure static linking.
 
 ```
-╰─>$ bazel build //:hello --subcommands
-INFO: Analyzed target //:hello (66 packages loaded, 3221 targets configured).
-SUBCOMMAND: # //:hello [action 'Compiling hello.cc', configuration: 3723722276aac1314320ca9a9fb2a278d80e4eb3b422da8939e984231a537159, execution platform: @@platforms//host:host, mnemonic: CppCompile]
-(cd /home/f/.cache/bazel/_bazel_f/f4a07668797e2b42c8e60c02cf2e35a9/execroot/_main && \
+SUBCOMMAND: # //:hello [action 'Compiling hello.cc', ...]
+(cd ... && \
   exec env - \
-    LD_LIBRARY_PATH=/usr/lib/mesa-diverted/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/mesa:/usr/lib/x86_64-linux-gnu/dri:/usr/lib/x86_64-linux-gnu/gallium-pipe \
-    PATH=... \
-    PWD=/proc/self/cwd \
-  external/toolchains_musl++toolchains_musl+musl-1_2_3-platform-x86_64-unknown-linux-gnu-target-x86_64-linux-musl/bin/x86_64-linux-musl-gcc -U_FORTIFY_SOURCE '-D_FORTIFY_SOURCE=1' -fstack-protector -Wall -Wunused-but-set-parameter -Wno-free-nonheap-object -fno-omit-frame-pointer '-std=c++14' -MD -MF bazel-out/k8-fastbuild/bin/_objs/hello/hello.pic.d -fPIC -iquote . -iquote bazel-out/k8-fastbuild/bin -iquote external/bazel_tools -iquote bazel-out/k8-fastbuild/bin/external/bazel_tools '-frandom-seed=bazel-out/k8-fastbuild/bin/_objs/hello/hello.pic.o' -no-canonical-prefixes -fno-canonical-system-headers -Wno-builtin-macro-redefined '-D__DATE__="redacted"' '-D__TIMESTAMP__="redacted"' '-D__TIME__="redacted"' -c hello.cc -o bazel-out/k8-fastbuild/bin/_objs/hello/hello.pic.o)
-# Configuration: 3723722276aac1314320ca9a9fb2a278d80e4eb3b422da8939e984231a537159
-# Execution platform: @@platforms//host:host
-# Runner: sandbox-fallback
-SUBCOMMAND: # //:hello [action 'Linking hello', configuration: 3723722276aac1314320ca9a9fb2a278d80e4eb3b422da8939e984231a537159, execution platform: @@platforms//host:host, mnemonic: CppLink]
-(cd /home/f/.cache/bazel/_bazel_f/f4a07668797e2b42c8e60c02cf2e35a9/execroot/_main && \
+  ... \
+  external/toolchains_musl++toolchains_musl+musl-1_2_3-platform-x86_64-unknown-linux-gnu-target-x86_64-linux-musl/bin/x86_64-linux-musl-gcc ... -c hello.cc -o .../hello.pic.o)
+
+SUBCOMMAND: # //:hello [action 'Linking hello', ...]
+(cd ... && \
   exec env - \
-    LD_LIBRARY_PATH=/usr/lib/mesa-diverted/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/mesa:/usr/lib/x86_64-linux-gnu/dri:/usr/lib/x86_64-linux-gnu/gallium-pipe \
-    PATH=/home/f/.cache/bazelisk/downloads/sha256/b4bae524f58e00a69f7c6fa10e62a91f85bfee586105dd480dccb4300c7cbca5/bin:/home/filmil/code/fzf/bin:/home/f/.local/bin:/home/f/.local/opt/fuchsia-sdk/tools/x64:/home/f/.local/opt/fuchsia-sdk:/home/f/.local/opt/depot_tools:/home/f/.local/opt/dart-sdk/bin:/home/f/.local/opt/dart-sdk/bin:/home/f/.local/opt/go/bin:/home/f/.cargo/bin:/home/f/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/f/.cabal/bin:/home/f/.ghcup/bin:/home/f/code/fzf/bin:/home/f/local/bin:/home/f/.cargo/bin:/home/f/.local/bin:/home/f/local/opt/dart-sdk/bin:/home/f/local/bin:/home/f/.cargo/bin:/home/f/.local/bin:/home/f/local/opt/dart-sdk/bin \
-    PWD=/proc/self/cwd \
-  external/toolchains_musl++toolchains_musl+musl-1_2_3-platform-x86_64-unknown-linux-gnu-target-x86_64-linux-musl/bin/x86_64-linux-musl-gcc @bazel-out/k8-fastbuild/bin/hello-0.params)
-# Configuration: 3723722276aac1314320ca9a9fb2a278d80e4eb3b422da8939e984231a537159
-# Execution platform: @@platforms//host:host
-# Runner: sandbox-fallback
-INFO: Found 1 target...
-Target //:hello up-to-date:
-  bazel-bin/hello
-INFO: Elapsed time: 5.606s, Critical Path: 1.13s
-INFO: 6 processes: 4 internal, 2 processwrapper-sandbox.
-INFO: Build completed successfully, 6 total actions
-
+  ... \
+  external/toolchains_musl++toolchains_musl+musl-1_2_3-platform-x86_64-unknown-linux-gnu-target-x86_64-linux-musl/bin/x86_64-linux-musl-gcc @.../hello-0.params)
 ```
-
-The resulting program is linked as follows:
-
+The `hello-0.params` file would contain arguments like:
 ```
-╰─>$ cat  bazel-out/k8-fastbuild/bin/hello-0.params
 -o
 bazel-out/k8-fastbuild/bin/hello
 bazel-out/k8-fastbuild/bin/_objs/hello/hello.pic.o
 -static-libgcc
 -Wl,-S
 -lstdc++
--Wl,-z,relro,-z,now
--no-canonical-prefixes
--pass-exit-codes
 -static
+...
 ```
 
-And, finally:
+## How to Run
 
-```
-╰─>$ ldd bazel-bin/hello
-        not a dynamic executable
-```
+After a successful build, the static binary will be located in the `bazel-bin` directory.
 
-The binary is fully static, which is what we wanted.
+1.  **Run the executable:**
+    ```bash
+    ./bazel-bin/hello
+    ```
+    You should see the following output:
+    ```
+    Hello world!
+    ```
 
+2.  **Verify Static Linking:**
+    You can verify that the resulting binary is indeed statically linked using the `ldd` command:
+    ```bash
+    ldd ./bazel-bin/hello
+    ```
+    The expected output should be:
+    ```
+    not a dynamic executable
+    ```
+    This confirms that the binary has no dynamic dependencies on shared libraries.
+
+## Summary
+
+This experiment showcases the use of a `musl`-based toolchain with Bazel to produce truly static C++ binaries, which is beneficial for portability and minimizing runtime dependencies.
