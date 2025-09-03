@@ -97,3 +97,17 @@ jobs:
       - name: Build
         run: "cd musl && bazel build //..."
 
+  test-go-protoc-binary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup bazel
+        uses: abhinavsingh/setup-bazel@v3
+        with:
+          version: 8.3.1
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: "cd go-protoc-binary && bazel build //..."
+      - name: Test
+        run: "cd go-protoc-binary && bazel test --test_output=errors //..."
+
