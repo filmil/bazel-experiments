@@ -1,1 +1,1 @@
-/home/filmil/code/bazel-experiments/go-protoc-binary/bazel-bin/proto/greeter_go_proto_/example.com/greeter_proto/greeter.pb.go
+../bazel-bin/proto/greeter_go_proto_/example.com/greeter_proto/greeter.pb.go
