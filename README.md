@@ -13,3 +13,5 @@ At the moment there are the following experiments:
   embedded binary in rust, using bazel as a build system.
 * [`musl`](musl): example build of a static C++ binary linked against musl
   instead of glibc.
+* [`go-protoc-binary`](go-protoc-binary): an example of a hermetic go protoc build
+
