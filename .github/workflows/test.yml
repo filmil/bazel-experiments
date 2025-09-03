@@ -24,9 +24,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "~/.cache/bazel"
-          key: ${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
+          key: a-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-
+            a-${{ runner.os }}-bazel-
       - name: Build
         run: "cd wasm && bazel build //..."
 
@@ -43,9 +43,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "~/.cache/bazel"
-          key: ${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
+          key: b-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-
+            b-${{ runner.os }}-bazel-
       - name: Build
         run: "cd rv5-tools && bazel build //..."
 
@@ -62,9 +62,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "~/.cache/bazel"
-          key: ${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
+          key: c-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-
+            c-${{ runner.os }}-bazel-
       - name: Build
         run: "cd rules-foreign-cc && bazel build //..."
 
@@ -81,9 +81,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "~/.cache/bazel"
-          key: ${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
+          key: d-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-
+            d-${{ runner.os }}-bazel-
       - name: Build
         run: "cd rebuild && bazel build //..."
 
@@ -100,9 +100,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "~/.cache/bazel"
-          key: ${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
+          key: e-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-
+            e-${{ runner.os }}-bazel-
       - name: Build
         run: "cd python && bazel build //..."
       - name: Test
@@ -121,9 +121,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "~/.cache/bazel"
-          key: ${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
+          key: f-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-
+            f-${{ runner.os }}-bazel-
       - name: Build
         run: "cd riscv64-rust-baremetal && bazel build //..."
 
@@ -136,6 +136,13 @@ jobs:
           version: 8.1.0
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Cache
+        uses: actions/cache@v3
+        with:
+          path: "~/.cache/bazel"
+          key: g-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
+          restore-keys: |
+            g-${{ runner.os }}-bazel-
       - name: Build
         run: "cd musl && bazel build //..."
 
@@ -152,9 +159,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "~/.cache/bazel"
-          key: ${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
+          key: h-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
           restore-keys: |
-            ${{ runner.os }}-bazel-
+            h-${{ runner.os }}-bazel-
       - name: Build
         run: "cd go-protoc-binary && bazel build //..."
       - name: Test
