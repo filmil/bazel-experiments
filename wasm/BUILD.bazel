@@ -1,7 +1,14 @@
-load("@bazel_gazelle//:def.bzl", "gazelle")
-load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier")
+load("@gazelle//:def.bzl", "gazelle")
+load("@buildifier_prebuilt//:rules.bzl", "buildifier")
 
 # gazelle:prefix github.com/grahamjenson/bazel-golang-wasm-proto
 gazelle(name = "gazelle")
 
-buildifier(name = "buildifier")
+buildifier(
+    name = "buildifier.check",
+    exclude_patterns = [
+        "./.git/*",
+    ],
+    lint_mode = "warn",
+    mode = "diff",
+)
