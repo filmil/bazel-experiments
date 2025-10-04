@@ -1,3 +1,5 @@
+load("@aspect_bazel_lib//lib:write_source_files.bzl", "write_source_files")
+load("@lit2md//build:macros.bzl", "lit2md2")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 
 sh_test(
@@ -10,4 +12,17 @@ sh_test(
         "@rules_shell//shell/runfiles",
         "@bazel_tools//tools/bash/runfiles",
     ],
+)
+
+lit2md2(
+    name = "binary_sh",
+    src = "binary.sh",
+    out = "binary.sh.md",
+)
+
+write_source_files(
+    name = "update_md",
+    files = {
+        "binary.sh.md": ":binary_sh",
+    },
 )
