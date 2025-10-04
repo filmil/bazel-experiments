@@ -15,18 +15,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup bazel
-        uses: abhinavsingh/setup-bazel@v3
+        uses: bazel-contrib/setup-bazel@0.15.0
         with:
-          version: 8.3.1
+          bazelisk-cache: false
+          disk-cache: ${{ github.workflow }}
+          repository-cache: false
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache
-        uses: actions/cache@v3
-        with:
-          path: "~/.cache/bazel"
-          key: a-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
-          restore-keys: |
-            a-${{ runner.os }}-bazel-
       - name: Build
         run: "cd wasm && bazel build //..."
 
@@ -34,18 +29,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup bazel
-        uses: abhinavsingh/setup-bazel@v3
+        uses: bazel-contrib/setup-bazel@0.15.0
         with:
-          version: 5.1.0
+          bazelisk-cache: false
+          disk-cache: ${{ github.workflow }}
+          repository-cache: false
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache
-        uses: actions/cache@v3
-        with:
-          path: "~/.cache/bazel"
-          key: b-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
-          restore-keys: |
-            b-${{ runner.os }}-bazel-
       - name: Build
         run: "cd rv5-tools && bazel build //..."
 
@@ -53,18 +43,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup bazel
-        uses: abhinavsingh/setup-bazel@v3
+        uses: bazel-contrib/setup-bazel@0.15.0
         with:
-          version: 6.3.2
+          bazelisk-cache: false
+          disk-cache: ${{ github.workflow }}
+          repository-cache: false
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache
-        uses: actions/cache@v3
-        with:
-          path: "~/.cache/bazel"
-          key: c-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
-          restore-keys: |
-            c-${{ runner.os }}-bazel-
       - name: Build
         run: "cd rules-foreign-cc && bazel build //..."
 
@@ -72,18 +57,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup bazel
-        uses: abhinavsingh/setup-bazel@v3
+        uses: bazel-contrib/setup-bazel@0.15.0
         with:
-          version: 6.3.2
+          bazelisk-cache: false
+          disk-cache: ${{ github.workflow }}
+          repository-cache: false
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache
-        uses: actions/cache@v3
-        with:
-          path: "~/.cache/bazel"
-          key: d-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
-          restore-keys: |
-            d-${{ runner.os }}-bazel-
       - name: Build
         run: "cd rebuild && bazel build //..."
 
@@ -91,18 +71,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup bazel
-        uses: abhinavsingh/setup-bazel@v3
+        uses: bazel-contrib/setup-bazel@0.15.0
         with:
-          version: 7.4.1
+          bazelisk-cache: false
+          disk-cache: ${{ github.workflow }}
+          repository-cache: false
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache
-        uses: actions/cache@v3
-        with:
-          path: "~/.cache/bazel"
-          key: e-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
-          restore-keys: |
-            e-${{ runner.os }}-bazel-
       - name: Build
         run: "cd python && bazel build //..."
       - name: Test
@@ -112,18 +87,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup bazel
-        uses: abhinavsingh/setup-bazel@v3
+        uses: bazel-contrib/setup-bazel@0.15.0
         with:
-          version: 7.2.0
+          bazelisk-cache: false
+          disk-cache: ${{ github.workflow }}
+          repository-cache: false
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache
-        uses: actions/cache@v3
-        with:
-          path: "~/.cache/bazel"
-          key: f-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
-          restore-keys: |
-            f-${{ runner.os }}-bazel-
       - name: Build
         run: "cd riscv64-rust-baremetal && bazel build //..."
 
@@ -131,18 +101,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup bazel
-        uses: abhinavsingh/setup-bazel@v3
+        uses: bazel-contrib/setup-bazel@0.15.0
         with:
-          version: 8.1.0
+          bazelisk-cache: false
+          disk-cache: ${{ github.workflow }}
+          repository-cache: false
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache
-        uses: actions/cache@v3
-        with:
-          path: "~/.cache/bazel"
-          key: g-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
-          restore-keys: |
-            g-${{ runner.os }}-bazel-
       - name: Build
         run: "cd musl && bazel build //..."
 
@@ -150,20 +115,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup bazel
-        uses: abhinavsingh/setup-bazel@v3
+        uses: bazel-contrib/setup-bazel@0.15.0
         with:
-          version: 8.3.1
+          bazelisk-cache: false
+          disk-cache: ${{ github.workflow }}
+          repository-cache: false
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache
-        uses: actions/cache@v3
-        with:
-          path: "~/.cache/bazel"
-          key: h-${{ runner.os }}-bazel-${{ hashFiles('**/MODULE.bazel.lock') }}
-          restore-keys: |
-            h-${{ runner.os }}-bazel-
       - name: Build
         run: "cd go-protoc-binary && bazel build //..."
       - name: Test
         run: "cd go-protoc-binary && bazel test --test_output=errors //..."
+
+  test-runfiles:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup bazel
+        uses: bazel-contrib/setup-bazel@0.15.0
+        with:
+          bazelisk-cache: false
+          disk-cache: ${{ github.workflow }}
+          repository-cache: false
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test base repo
+        run: "cd runfiles && bazel test --test_output=errors //..."
+      - name: Integration test
+        run: "cd runfiles/integration && bazel test --test_output=errors //..."
 
