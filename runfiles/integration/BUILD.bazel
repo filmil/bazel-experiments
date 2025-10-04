@@ -1,0 +1,13 @@
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+sh_test(
+    name = "test",
+    srcs = [
+        "binary.sh",
+    ],
+    data = [
+        "@runfiles//:binary",
+        "@rules_shell//shell/runfiles",
+        "@bazel_tools//tools/bash/runfiles",
+    ],
+)

@@ -1,0 +1,41 @@
+load("@aspect_bazel_lib//lib:write_source_files.bzl", "write_source_files")
+load("@lit2md//build:macros.bzl", "lit2md2")
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
+load("@rules_shell//shell:sh_library.bzl", "sh_library")
+
+package(default_visibility = [ "//visibility:public"])
+
+sh_library(
+    name = "library",
+    srcs = [
+        "library.sh",
+    ],
+)
+
+sh_binary(
+    name = "binary",
+    srcs = [
+        "binary.sh",
+    ],
+    deps = [
+        ":library",
+    ],
+    data = [
+        ":library",
+        "@rules_shell//shell/runfiles",
+        "@bazel_tools//tools/bash/runfiles",
+    ],
+)
+
+lit2md2(
+    name = "readme",
+    src = "binary.sh",
+    out = "README.md",
+)
+
+write_source_files(
+    name = "update_md",
+    files = {
+        "README.md": ":readme",
+    },
+)
