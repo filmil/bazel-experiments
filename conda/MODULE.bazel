@@ -1,0 +1,44 @@
+module(
+    name = "bazel_conda_demo",
+    version = "0.0.0",
+)
+
+
+bazel_dep(
+    name = "bazel_skylib",
+    version = "1.8.2",
+)
+bazel_dep(name = "rules_go", version = "0.58.2",
+    repo_name = "io_bazel_rules_go",
+)
+bazel_dep(
+    name = "hermetic_clang_toolchain",
+    version = "1.0.1",
+)
+
+
+git_repository = use_repo_rule(
+    "@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+git_repository(
+    name = "com_github_10XGenomics_rules_conda",
+    remote = "https://github.com/10XGenomics/rules_conda",
+    commit = "7399b32b6568d0dede8ddcce86edab1c1d8f9f3d",
+)
+conda_ext_level1 = use_extension("//:extensions.bzl", "conda_ext_level1")
+use_repo(
+    conda_ext_level1,
+    "rules_license",
+)
+conda_ext_level2 = use_extension("//:extensions.bzl", "conda_ext_level2")
+use_repo(
+    conda_ext_level2,
+    "pm_mamba_micromamba",
+)
+conda_environment = use_extension(
+    "//third_party/conda:conda_env.bzl", "conda_env_ext")
+use_repo(
+    conda_environment,
+    "conda_env",
+)
+
+
