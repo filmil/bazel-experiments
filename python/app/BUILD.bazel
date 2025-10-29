@@ -3,7 +3,7 @@ load(
     "requirement",
     "data_requirement",
     "dist_info_requirement",
-    "entry_point",
+    #"entry_point",
 )
 load("@rules_python//python:defs.bzl", "py_binary", "py_test")
 
@@ -15,8 +15,8 @@ py_binary(
   ]
 )
 
-alias(
-    name = "yamllint",
-    actual = entry_point("yamllint")
-)
+#alias(
+    #name = "yamllint",
+    #actual = entry_point("yamllint")
+#)
 
