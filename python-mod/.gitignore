@@ -2,4 +2,5 @@ bazel-*
 user.bazelrc
 .vscode
 local
+.env
 
