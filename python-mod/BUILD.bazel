@@ -1,0 +1,17 @@
+load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
+
+gazelle_binary(
+    name = "gazelle_multilang",
+    languages = [
+        # List of language plugins.
+        # If you want to generate py_proto_library targets (PR #3057), then
+        # the proto language plugin _must_ come before the rules_python plugin.
+        #"@bazel_gazelle//language/proto",
+        "@rules_python_gazelle_plugin//python",
+    ],
+)
+
+gazelle(
+    name = "gazelle",
+    gazelle = ":gazelle_multilang",
+)
