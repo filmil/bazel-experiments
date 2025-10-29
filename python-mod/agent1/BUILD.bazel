@@ -12,3 +12,4 @@ py_library(
         "@pip//google_adk",
     ],
 )
+
