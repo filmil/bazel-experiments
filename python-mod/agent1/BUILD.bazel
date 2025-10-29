@@ -1,11 +1,14 @@
-load("@rules_python//python:defs.bzl", "py_binary")
+load("@rules_python//python:defs.bzl", "py_library")
+load("@pip//:requirements.bzl", "requirement")
 
-py_binary(
-    name = "agent1_bin",
-    srcs = ["__main__.py"],
-    main = "__main__.py",
+py_library(
+    name = "agent1",
+    srcs = [
+        "__init__.py",
+        "agent.py",
+    ],
     visibility = ["//:__subpackages__"],
     deps = [
-        "@pip//:google-adk",
+        "@pip//google_adk",
     ],
 )
