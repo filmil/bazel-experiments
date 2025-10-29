@@ -1,6 +1,6 @@
-Flask==2.0.2
+Flask==2.2.2
 itsdangerous
 Jinja2
 click
-Werkzeug
+Werkzeug==2.2.2
 yamllint
