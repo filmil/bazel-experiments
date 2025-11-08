@@ -171,4 +171,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build repo
-        run: "cd adk && bazel build --test_output=errors //examples/..."
+        run: "cd js && bazel test --test_output=errors //examples/..."
