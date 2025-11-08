@@ -1,0 +1,10 @@
+{
+    "name": "@scoped/c",
+    "private": true,
+    "dependencies": {
+        "@scoped/a": "link:../a"
+    },
+    "peerDependencies": {
+        "@scoped/b": "workspace:*"
+    }
+}

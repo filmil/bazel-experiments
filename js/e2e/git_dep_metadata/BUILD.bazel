@@ -1,0 +1,16 @@
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+# Test that a package imported directly from a git repository has its
+# .git folder removed.
+sh_test(
+    name = "no_git_metadata_test",
+    srcs = ["no_git_metadata_test.sh"],
+    args = [
+        "$(rootpath @protoc-gen-grpc//:pkg)",
+        "$(rootpath @syncpack//:pkg)",
+    ],
+    data = [
+        "@protoc-gen-grpc//:pkg",
+        "@syncpack//:pkg",
+    ],
+)

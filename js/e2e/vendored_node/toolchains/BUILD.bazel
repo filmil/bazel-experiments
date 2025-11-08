@@ -1,0 +1,42 @@
+"""Define toolchains for nodejs
+
+Note that this file causes eager fetches of node for all platforms
+because the Bazel analysis phase follows the labels below.
+
+In a real project you would vendor the binaries you need, or
+build them from source, so there shouldn't be any fetches required.
+"""
+
+load("@rules_nodejs//nodejs:toolchain.bzl", "nodejs_toolchain")
+
+[
+    toolchain(
+        name = "node_vendored_%s_toolchain" % os,
+        exec_compatible_with = [
+            "@platforms//os:" + os,
+            "@platforms//cpu:x86_64",
+        ],
+        toolchain = ":node_" + os,
+        toolchain_type = "@rules_nodejs//nodejs:toolchain_type",
+    )
+    for os in [
+        "linux",
+        "macos",
+        "windows",
+    ]
+]
+
+nodejs_toolchain(
+    name = "node_linux",
+    node = "@vendored_node_linux_amd64//:bin/node",
+)
+
+nodejs_toolchain(
+    name = "node_macos",
+    node = "@vendored_node_darwin_amd64//:bin/node",
+)
+
+nodejs_toolchain(
+    name = "node_windows",
+    node = "@vendored_node_windows_amd64//:node.exe",
+)

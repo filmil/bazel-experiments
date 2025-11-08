@@ -1,0 +1,5 @@
+load("//npm:repositories.bzl", "list_patches")
+
+list_patches(
+    name = "patches",
+)

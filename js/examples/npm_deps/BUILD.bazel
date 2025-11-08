@@ -1,0 +1,298 @@
+load("@aspect_bazel_lib//lib:diff_test.bzl", "diff_test")
+load("@aspect_rules_js//js:defs.bzl", "js_binary", "js_run_binary", "js_test")
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+
+###########################
+
+# Load from the "bin" property from the package.json of the uvu package
+load("@npm//examples/npm_deps:uvu/package_json.bzl", uvu_bin = "bin")
+
+# Directly load from rollup's bin entries, skipping the "bin" helper from package_json.bzl
+# Just to show what the syntax de-sugaring looks like, and to test that
+# bare `npm_import` produces working binaries.
+load("@npm__rollup__2.70.2//examples/npm_deps:package_json.bzl", "rollup", "rollup_binary", "rollup_test")
+
+###########################
+
+# Link all direct dependencies in /examples/npm_deps/package.json to
+# bazel-bin/examples/npm_deps/node_modules
+npm_link_all_packages(name = "node_modules")
+
+#######################################
+# Use case 1: transitive npm dependencies
+
+write_file(
+    name = "write1",
+    out = "case1.js",
+    content = ["require('fs').writeFileSync(process.argv[2], require('@gregmagolan/test-b'))"],
+)
+
+write_file(
+    name = "expected1",
+    out = "expected1.txt",
+    content = ["test-b-0.0.2/test-a-0.0.1"],
+)
+
+js_binary(
+    name = "bin1",
+    data = [":node_modules/@gregmagolan/test-b"],
+    entry_point = "case1.js",
+)
+
+js_run_binary(
+    name = "run1",
+    srcs = [],
+    outs = ["actual1"],
+    args = ["examples/npm_deps/actual1"],
+    tool = ":bin1",
+)
+
+diff_test(
+    name = "test1",
+    file1 = "expected1",
+    file2 = "actual1",
+)
+
+#######################################
+# Use case 2: peer deps
+js_test(
+    name = "test_peer",
+    data = [
+        ":node_modules/@rollup/plugin-commonjs",
+        ":node_modules/mobx-react",
+        ":node_modules/react",
+        # TODO: fix this test so we test a peer dependency without requiring it as a direct
+        # dependency https://github.com/aspect-build/rules_js/issues/92
+        ":node_modules/rollup",
+    ],
+    entry_point = "peer_test.js",
+)
+
+#######################################
+# Use case 3: postinstall creates a file
+# The @aspect-test/c package's postinstall creates a data.json file
+
+write_file(
+    name = "write3",
+    out = "case3.js",
+    content = ["""
+const content = require('@aspect-test/c/data.json')
+if (content.answer !== '42*') {
+    console.error(`expected answer to be '42*', but got '${content.answer}'`)
+    process.exit(1);
+}
+"""],
+)
+
+js_test(
+    name = "test3",
+    data = [
+        ":node_modules/@aspect-test/c",
+    ],
+    entry_point = "case3.js",
+)
+
+#######################################
+# Use case 4: custom postinstall creates a file
+# See postinstall on @aspect-test/c in WORKSPACE
+
+write_file(
+    name = "write4",
+    out = "case4.js",
+    content = ["""
+const fs = require('fs')
+const path = require('path')
+const content = fs.readFileSync(path.join(process.argv[2], 'cow.txt'), 'utf-8')
+console.log(content)
+if (!/^moo\\s+mooo\\s*$/.test(content)) {
+    console.error("expected file to contain cow sounds")
+    process.exit(1);
+}
+"""],
+)
+
+js_test(
+    name = "test4",
+    args = ["$(rootpath :node_modules/@aspect-test/c/dir)"],
+    data = [
+        ":node_modules/@aspect-test/c/dir",
+    ],
+    entry_point = "case4.js",
+)
+
+####################################################
+# Use case 5: bins from npm_import
+# Use a generated rollup and rollup_binary targets from an npm_import
+
+rollup(
+    name = "actual5",
+    args = ["--version"],
+    stdout = "actual5.txt",
+)
+
+rollup_binary(
+    name = "rollup_bin",
+    args = ["--version"],
+)
+
+rollup_test(
+    name = "rollup_version_test",
+    args = ["--version"],
+)
+
+write_file(
+    name = "expected5",
+    out = "expected5.txt",
+    content = [
+        "rollup v2.70.2",
+        "",
+    ],
+    newline = "unix",
+)
+
+diff_test(
+    name = "test5",
+    file1 = ":expected5",
+    file2 = ":actual5",
+)
+
+js_run_binary(
+    name = "actual5_alt",
+    args = ["--version"],
+    stdout = "actual5_alt.txt",
+    tool = ":rollup_bin",
+)
+
+diff_test(
+    name = "test5_alt",
+    file1 = ":expected5",
+    file2 = ":actual5_alt",
+)
+
+####################################################
+# Use case 6: bin from npm_translate_lock
+# Use a generated bin.uvo_test target
+
+# Generated bin test as a test target
+write_file(
+    name = "uvu_spec",
+    out = "uvu.spec.js",
+    content = [
+        "const { test } = require('uvu');",
+        "const assert = require('uvu/assert');",
+        "const pkg_a = require('@mycorp/pkg-a');",
+        "test('version', () => {",
+        "  assert.is(pkg_a.getAcornVersion(), '8.7.1');",
+        "})",
+        "test.run()",
+    ],
+)
+
+# @unused
+uvu = uvu_bin.uvu
+
+# @unused
+uvu_binary = uvu_bin.uvu_binary
+
+uvu_test = uvu_bin.uvu_test
+
+uvu_test(
+    name = "test_uvu_version",
+    args = [
+        "--color",
+        "false",
+    ],
+    data = [
+        ":node_modules/@mycorp/pkg-a",
+        # ":node_modules/uvu" dep required because our spec calls require('uvu')
+        ":node_modules/uvu",
+        ":uvu_spec",
+    ],
+)
+
+#######################################
+# Use case 6: depend on a hoisted npm package, ms, that isn't a direct dependency
+# in package.json but is a transitive dep of debug@3.2.7. Hoisted packages are
+# currently specified in the translate_package_lock rule. In the future we'll
+# add support for parsing the .npmrc and hoisting via public-hoist-pattern[]
+# directives.
+
+write_file(
+    name = "write6",
+    out = "case6.js",
+    content = ["""
+const ms = require('ms')
+const assert = require('assert')
+assert.ok(ms('2 days') == 172800000)
+"""],
+)
+
+js_test(
+    name = "test6",
+    data = [
+        ":node_modules/ms",
+    ],
+    entry_point = "case6.js",
+)
+
+#######################################
+# Case 7: use a first-party npm package within our Bazel monorepo workspace from an npm_package target
+
+write_file(
+    name = "write7",
+    out = "case7.js",
+    content = ["require('@mycorp/pkg-a')"],
+)
+
+js_test(
+    name = "test7",
+    data = [
+        ":node_modules/@mycorp/pkg-a",
+    ],
+    entry_point = "case7.js",
+)
+
+#######################################
+# Case 8: patch applied via `pnpm.patchesDependencies` then by `patches`
+js_test(
+    name = "test8",
+    data = [
+        ":node_modules/meaning-of-life",
+    ],
+    entry_point = "patched-dependencies-test.js",
+)
+
+#######################################
+# Case 9: use a first-party npm package within our Bazel monorepo workspace from a js_library target
+
+write_file(
+    name = "write9",
+    out = "case9.js",
+    content = ["require('@mycorp/pkg-d')"],
+)
+
+js_test(
+    name = "test9",
+    data = [
+        ":node_modules/@mycorp/pkg-d",
+    ],
+    entry_point = "case9.js",
+)
+
+#######################################
+# Case 10: use a first-party npm package a transitive dependency on a monorepo workspace from a js_library target
+
+write_file(
+    name = "write10",
+    out = "case10.js",
+    content = ["require('@mycorp/pkg-e')"],
+)
+
+js_test(
+    name = "test10",
+    data = [
+        ":node_modules/@mycorp/pkg-e",
+    ],
+    entry_point = "case10.js",
+)

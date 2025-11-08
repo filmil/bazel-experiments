@@ -1,0 +1,85 @@
+"""Examples of using rules_js-managed npm dependencies from a genrule.
+
+Most users should *not* follow this pattern.
+Instead use the js_binary rule to create a program that knows how to resolve dependencies from npm.
+
+See /examples/js_binary.
+
+Also for trivial nodejs programs without npm dependencies, rules_js is not needed;
+see examples at
+https://github.com/bazelbuild/rules_nodejs/tree/stable/examples/toolchain
+"""
+
+load("@aspect_bazel_lib//lib:copy_to_bin.bzl", "copy_to_bin")
+load("@aspect_bazel_lib//lib:diff_test.bzl", "diff_test")
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+
+##########################################################
+# Use case 1
+# Directly invoke a bin from an npm package to transform inputs to bazel-out
+# Similar to build_bazel_rules_nodejs generated npm_package_bin targets
+
+# Trivial test fixture: the shortest legal JS program
+write_file(
+    name = "write_one",
+    out = "one.js",
+    content = ["1"],
+    visibility = ["//examples:__subpackages__"],
+)
+
+genrule(
+    name = "call_acorn",
+    srcs = [
+        ":one.js",
+        "//:node_modules/acorn/dir",
+    ],
+    outs = ["out1"],
+    cmd = " ".join([
+        "$(NODE_PATH)",
+        # reference the location where the "acorn" npm package was linked in the rules_js npm package store.
+        "./$(execpath //:node_modules/acorn/dir)/bin/acorn",
+        "--compact",
+        "$(execpath :one.js)",
+        # $@ is bazel shorthand for the path of the output file
+        ">$@",
+    ]),
+    toolchains = ["@nodejs_toolchains//:resolved_toolchain"],
+    tools = ["@nodejs_toolchains//:resolved_toolchain"],
+)
+
+diff_test(
+    name = "test_acorn",
+    file1 = "out1",
+    file2 = "//examples:expected_one_ast.json",
+)
+
+################################################
+# Use case 2
+# Run a first-party program that requires a package from npm.
+
+copy_to_bin(
+    name = "require_acorn_js",
+    srcs = ["require_acorn.js"],
+)
+
+genrule(
+    name = "require_acorn",
+    srcs = [
+        ":require_acorn_js",
+        # reference the location where the "acorn" npm package was linked in our root Bazel package.
+        "//:node_modules/acorn",
+    ],
+    outs = ["out2"],
+    cmd = """
+        $(NODE_PATH) \\
+        ./$(execpath :require_acorn_js) \\
+        $@""",
+    toolchains = ["@nodejs_toolchains//:resolved_toolchain"],
+    tools = ["@nodejs_toolchains//:resolved_toolchain"],
+)
+
+diff_test(
+    name = "test_require_acorn",
+    file1 = "out2",
+    file2 = "//examples:expected_one_ast.json",
+)

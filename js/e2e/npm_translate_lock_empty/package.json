@@ -1,0 +1,9 @@
+{
+    "private": true,
+    "pnpm": {
+        "onlyBuiltDependencies": []
+    },
+    "devDependencies": {
+        "debug": "^4.3.4"
+    }
+}

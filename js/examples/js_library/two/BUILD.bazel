@@ -1,0 +1,45 @@
+load("@aspect_rules_js//js:defs.bzl", "js_test")
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+load(":tsc.bzl", "tsc")
+
+tsc(
+    name = "two",
+    srcs = [
+        "tsconfig.json",
+        "two.ts",
+        "//:node_modules/@types/node",
+        "//examples/js_library/one",
+    ],
+    outs = [
+        "two.js",
+    ],
+    include_types = True,
+)
+
+js_test(
+    name = "two_test",
+    data = ["//examples/js_library/one"],
+    entry_point = "two.js",
+)
+
+bzl_library(
+    name = "tsc",
+    srcs = ["tsc.bzl"],
+    deps = [
+        # this is a bzl_library target, exposing the package_json.bzl file we depend on
+        "@npm//:typescript_bzl_library",
+    ],
+)
+
+# TODO(derek): stardoc doesn't work under bzlmod with these
+# targets when working against an overridden version of bazel-lib.
+# Remove comments of the released version of bazel-lib succeeds.
+#
+# stardoc_with_diff_test(
+#     name = "tsc-docs",
+#     bzl_library_target = ":tsc",
+# )
+#
+# update_docs(
+#     name = "docs",
+# )

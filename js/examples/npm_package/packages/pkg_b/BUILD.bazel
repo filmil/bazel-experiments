@@ -1,0 +1,21 @@
+load("@aspect_rules_js//npm:defs.bzl", "npm_package")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+
+npm_link_all_packages(name = "node_modules")
+
+# The terminal npm_package target for this package. This target is linked
+# manually in the root of the pnpm workspace with `npm_link_package`.
+npm_package(
+    name = "pkg",
+    srcs = [
+        "index.js",
+        "package.json",
+    ],
+    data = [
+        # npm deps must be added explicitly as this package is linked manually
+        # so deps are _not_ picked up from the pnpm lock file
+        ":node_modules",
+    ],
+    package = "@mycorp/pkg-b",
+    visibility = ["//visibility:public"],
+)

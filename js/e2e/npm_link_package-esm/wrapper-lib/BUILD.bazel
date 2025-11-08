@@ -1,0 +1,30 @@
+load("@aspect_rules_js//js:defs.bzl", "js_library")
+load("@aspect_rules_js//npm:defs.bzl", "npm_package")
+
+# A named package depending on another named package and a js_library()
+
+js_library(
+    name = "js",
+    srcs = [
+        "index.mjs",
+        # NOTE: .mjs does not support index files unless it is alongside a package.json
+        # containing an `"exports": {".": "index.mjs"}`.
+        # See: https://nodejs.org/api/packages.html#exports
+        "package.json",
+    ],
+    data = [
+        "//lib:lib_pkg",
+        "//pkg:lib_pkg",
+    ],
+    visibility = ["//visibility:private"],
+    deps = [
+        "//wrapper-lib/subdir",
+    ],
+)
+
+npm_package(
+    name = "wrapper-lib_pkg",
+    srcs = [":js"],
+    package = "@e2e/wrapper-lib",
+    visibility = ["//visibility:public"],
+)

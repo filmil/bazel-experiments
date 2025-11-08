@@ -1,0 +1,44 @@
+# NOTE: keep in sync with e2e/pnpm_workspace(_rerooted)
+
+load("@aspect_bazel_lib//lib:write_source_files.bzl", "write_source_files")
+load("@bazel_skylib//rules:build_test.bzl", "build_test")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+npm_link_all_packages(name = "node_modules")
+
+sh_test(
+    name = "node_test",
+    srcs = ["node_test.sh"],
+    args = ["$(NODE_PATH)"],
+    data = [
+        "//:node_modules/typescript",
+        # This eager toolchain fetching could be cleaned up in the future
+        "@nodejs_darwin_amd64//:node_files",
+        "@nodejs_darwin_arm64//:node_files",
+        "@nodejs_linux_amd64//:node_files",
+        "@nodejs_linux_arm64//:node_files",
+    ],
+    toolchains = ["@nodejs_toolchains//:resolved_toolchain"],
+)
+
+build_test(
+    name = "vendored",
+    targets = [
+        "//:node_modules/lodash",
+    ],
+)
+
+write_source_files(
+    name = "repos",
+    files = {
+        "snapshots/defs.bzl": "@npm//:defs.bzl",
+    },
+    # Target names may be different on bazel versions
+    tags = ["skip-on-bazel6"],
+    # Target names may be different on workspace vs bzlmod
+    target_compatible_with = select({
+        "@aspect_bazel_lib//lib:bzlmod": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+)
