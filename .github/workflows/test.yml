@@ -159,3 +159,16 @@ jobs:
       - name: Test repo
         run: "cd adk && bazel test --test_output=errors //..."
 
+  test-js:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup bazel
+        uses: bazel-contrib/setup-bazel@0.15.0
+        with:
+          bazelisk-cache: false
+          disk-cache: ${{ github.workflow }}
+          repository-cache: false
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build repo
+        run: "cd adk && bazel build --test_output=errors //examples/..."
