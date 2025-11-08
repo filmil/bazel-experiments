@@ -1,8 +1,0 @@
-{
-    "name": "@lib/b",
-    "private": true,
-    "dependencies": {
-        "alias-1": "npm:@types/sizzle@~2.3.8",
-        "@aspect-test/f": "1.0.0"
-    }
-}

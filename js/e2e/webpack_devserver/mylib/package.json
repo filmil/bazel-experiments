@@ -1,6 +1,0 @@
-{
-    "name": "@mycorp/mylib",
-    "dependencies": {
-        "chalk": "^4"
-    }
-}

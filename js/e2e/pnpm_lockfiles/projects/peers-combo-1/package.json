@@ -1,8 +1,0 @@
-{
-    "name": "test-c201-d200",
-    "private": true,
-    "dependencies": {
-        "@aspect-test/c": "2.0.1",
-        "@aspect-test/d": "2.0.0"
-    }
-}

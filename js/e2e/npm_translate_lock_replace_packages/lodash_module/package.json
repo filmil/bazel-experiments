@@ -1,6 +1,0 @@
-{
-    "name": "lodash",
-    "version": "4.17.20",
-    "type": "module",
-    "main": "lodash.js"
-}

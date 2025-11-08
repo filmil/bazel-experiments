@@ -1,9 +1,0 @@
-{
-    "private": true,
-    "pnpm": {
-        "onlyBuiltDependencies": []
-    },
-    "dependencies": {
-        "meaning-of-life": "1.0.0"
-    }
-}

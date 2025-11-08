@@ -1,4 +1,0 @@
-packages:
-    - '.'
-    - '../project-a'
-    - '../project-b'

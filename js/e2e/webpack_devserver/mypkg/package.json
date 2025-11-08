@@ -1,6 +1,0 @@
-{
-    "name": "@mycorp/mypkg",
-    "dependencies": {
-        "chalk": "^4"
-    }
-}
