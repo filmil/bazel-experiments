@@ -1,6 +1,7 @@
-package(default_visibility = ["//visibility:public"])
-
+load("@platforms//host:constraints.bzl", "HOST_CONSTRAINTS")
 load("@rules_go//proto:compiler.bzl", "go_proto_compiler")
+
+package(default_visibility = ["//visibility:public"])
 
 go_proto_compiler(
     name = "go_server",
@@ -20,4 +21,14 @@ go_proto_compiler(
     suffix = ".pb.client.go",
     visibility = ["//visibility:public"],
     deps = [],
+)
+
+# Don't allow rules_go to compile the Go SDK with cgo enabled, as that
+# would cause a dependency on a functional C++ toolchain.
+# This value is referenced in the .bazelrc
+platform(
+    name = "no_cgo_host_platform",
+    constraint_values = HOST_CONSTRAINTS + [
+        "@rules_go//go/toolchain:cgo_off",
+    ],
 )

@@ -1,0 +1,26 @@
+module(
+    name = "rules-foreign-cc",
+    version = "0.0.0",
+)
+
+bazel_dep(name = "rules_foreign_cc", version = "0.15.1")
+
+
+bazel_dep(name = "toolchains_llvm", version = "1.5.0")
+llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
+llvm.toolchain(
+   llvm_version = "16.0.0",
+)
+use_repo(llvm, "llvm_toolchain")
+register_toolchains("@llvm_toolchain//:all")
+
+
+git_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+git_repository(
+    name = "dtc",
+    commit = "ccf1f62d59adc933fb348b866f351824cdd00c73",
+    remote = "https://github.com/dgibson/dtc",
+    build_file = "//third_party/dtc:dtc.BUILD.bazel",
+    shallow_since = "1686217671 +1000",
+)
+
