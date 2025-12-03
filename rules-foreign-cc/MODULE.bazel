@@ -3,7 +3,10 @@ module(
     version = "0.0.0",
 )
 
+bazel_dep(name = "flex", version = "2.6.4")
+bazel_dep(name = "bison", version = "3.8.2")
 bazel_dep(name = "rules_foreign_cc", version = "0.15.1")
+bazel_dep(name = "platforms", version = "1.0.0")
 
 
 bazel_dep(name = "toolchains_llvm", version = "1.5.0")
@@ -18,9 +21,26 @@ register_toolchains("@llvm_toolchain//:all")
 git_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 git_repository(
     name = "dtc",
-    commit = "ccf1f62d59adc933fb348b866f351824cdd00c73",
+    commit = "7f3184a6c550bb8fb59e93c9901d75dced889dcf",
     remote = "https://github.com/dgibson/dtc",
     build_file = "//third_party/dtc:dtc.BUILD.bazel",
     shallow_since = "1686217671 +1000",
+    patch_strip = 1,
+    patches = [
+        "//third_party/dtc:0001-fix-env.patch",
+    ],
+)
+
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+http_archive(
+    name = "m4",
+    build_file = "//third_party/m4:BUILD.m4.bazel",
+    strip_prefix = "m4-1.4.19",
+    urls = [
+        "https://mirror.bazel.build/ftp.gnu.org/gnu/m4/m4-1.4.19.tar.xz",
+        "https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.xz",
+    ],
+    sha256 = "63aede5c6d33b6d9b13511cd0be2cac046f2e70fd0a07aa9573a04a82783af96",
 )
 
