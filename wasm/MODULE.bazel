@@ -9,6 +9,17 @@ bazel_dep(name = "rules_go", version = "0.57.0")
 bazel_dep(name = "gazelle", version = "0.45.0")
 bazel_dep(name = "rules_proto", version = "7.1.0")
 
+####### PROTOBUF ##########
+bazel_dep(name = "toolchains_protoc", version = "0.5.0")
+protoc = use_extension("@toolchains_protoc//protoc:extensions.bzl", "protoc")
+protoc.toolchain(
+    google_protobuf = "com_google_protobuf",
+    # Demonstrate overriding the default version
+    version = "v28.0",
+)
+use_repo(protoc, "com_google_protobuf")
+register_toolchains("//tools/toolchains:all")
+
 
 bazel_dep(name = "protobuf", version = "29.3")
 single_version_override(
@@ -42,15 +53,4 @@ http_file(
     urls = ["https://raw.githubusercontent.com/powdahound/ec2instances.info/b6664cf095405e806d69ea2c8b1d3f02b5951cf1/www/instances.json"],
 )
 
-
-####### PROTOBUF ##########
-bazel_dep(name = "toolchains_protoc", version = "0.5.0")
-protoc = use_extension("@toolchains_protoc//protoc:extensions.bzl", "protoc")
-protoc.toolchain(
-    google_protobuf = "com_google_protobuf",
-    # Demonstrate overriding the default version
-    version = "v28.0",
-)
-use_repo(protoc, "com_google_protobuf")
-register_toolchains("//tools/toolchains:all")
 
