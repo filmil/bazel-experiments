@@ -1,0 +1,29 @@
+From 9ab3572068691c76d17619998cc11d185d62b1b9 Mon Sep 17 00:00:00 2001
+From: Filip Filmar <filmil@gmail.com>
+Date: Wed, 3 Dec 2025 01:52:59 -0800
+Subject: [PATCH] fix: env
+
+---
+ Makefile | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 83d8220..06d2617 100644
+--- a/Makefile
++++ b/Makefile
+@@ -30,9 +30,9 @@ WARNINGS += -Wsuggest-attribute=format
+ endif
+ CFLAGS = -g -Os $(SHAREDLIB_CFLAGS) -Werror $(WARNINGS) $(EXTRA_CFLAGS)
+ 
+-BISON = bison
+-LEX = flex
+-SWIG = swig
++BISON ?= bison
++LEX ?= flex
++SWIG ?= swig
+ PKG_CONFIG ?= pkg-config
+ 
+ INSTALL = install
+-- 
+2.39.5
+

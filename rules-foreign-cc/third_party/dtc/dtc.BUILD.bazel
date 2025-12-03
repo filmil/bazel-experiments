@@ -66,6 +66,16 @@ make(
   # group named after the respective binary.
   out_binaries = [ "dtc", "fdtdump", ],
   visibility = ["//visibility:public"],
+  build_data = [
+    "@flex//:flex",
+    "@bison//:bison",
+    "@m4//:m4_exe",
+  ],
+  env = {
+    "LEX": "$$(echo $$EXT_BUILD_ROOT)/$(location @flex//:flex)",
+    "BISON": "$$(echo $$EXT_BUILD_ROOT)/$(location @bison//:bison)",
+    "M4": "$$(echo $$EXT_BUILD_ROOT)/$(location @m4//:m4_exe)",
+  },
 )
 # Here is how to extract a binary file named `dtc` from the compilation above,
 # and make it available as a target.
