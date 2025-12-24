@@ -7,7 +7,9 @@ cc_binary(
         "hello.cc",
     ],
     target_compatible_with = [
-        "//toolchain/platform:serv_rv32i",
+        "@platforms//cpu:riscv32",
+        "@platforms//os:none",
+        "//toolchain/constraints:serv_i",
     ],
 )
 
