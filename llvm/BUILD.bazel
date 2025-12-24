@@ -1,6 +1,20 @@
+load("@buildifier_prebuilt//:rules.bzl", "buildifier")
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
 cc_binary(
     name = "hello",
     srcs = [
         "hello.cc",
     ],
+    target_compatible_with = [
+        "//toolchain/platform:serv_rv32i",
+    ],
+)
+
+buildifier(
+    name = "buildifier",
+    exclude_patterns = [
+        "./.git/*",
+    ],
+    lint_mode = "warn",
 )

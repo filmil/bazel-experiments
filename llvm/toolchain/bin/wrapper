@@ -1,0 +1,13 @@
+#!/bin/bash
+
+readonly filename="${0}"
+# Parameter Expansion
+readonly base_filename="${filename##*/}" 
+readonly dirname="${filename%/$base_filename}"
+
+EXT_BUILD_DIR="${dirname%llvm/toolchain/bin/wrapper}"
+if [[ "${EXT_BUILD_DIR}" == *"external/"* ]]; then
+    EXT_BUILD_DIR=""
+fi
+TOOLCHAIN_BINDIR="${EXT_BUILD_DIR}external/muntjac_toolchain/bin"
+exec "${TOOLCHAIN_BINDIR}"/"riscv64-unknown-elf-${base_filename}" "${@}"
