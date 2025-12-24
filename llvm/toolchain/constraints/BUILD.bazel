@@ -1,0 +1,24 @@
+package(default_visibility = ["//visibility:public"])
+
+constraint_setting(
+    name = "march",
+    visibility = ["//visibility:public"],
+)
+
+constraint_value(
+    name = "imac",
+    constraint_setting = ":march",
+    visibility = ["//visibility:public"],
+)
+
+constraint_value(
+    name = "i",
+    constraint_setting = ":march",
+    visibility = ["//visibility:public"],
+)
+
+constraint_value(
+    name = "serv_i",
+    constraint_setting = ":march",
+    visibility = ["//visibility:public"],
+)

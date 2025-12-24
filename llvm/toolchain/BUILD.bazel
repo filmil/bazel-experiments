@@ -1,0 +1,335 @@
+load("@rules_cc//cc:cc_import.bzl", "cc_import")
+load("@rules_cc//cc/toolchains:cc_toolchain.bzl", "cc_toolchain")
+load("@bazel_skylib//rules:native_binary.bzl", "native_binary")
+load("@toolchains_llvm//toolchain:cc_toolchain_config.bzl", "cc_toolchain_config")
+load("@toolchains_llvm//toolchain/internal:system_module_map.bzl", "system_module_map")
+
+
+cc_library(
+    name = "startup",
+    srcs = [
+        "startup/entry.S",
+        "startup/start.c",
+    ],
+    target_compatible_with = [
+        "@platforms//os:none",
+        "//toolchain/constraints/march:serv_i",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [":startup/linker.ld"],
+)
+
+filegroup(
+    name = "all-components-riscv32-none",
+    srcs = [
+        "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:bin",
+        "@llvm_toolchain//:compiler-components-riscv32-none",
+        "@llvm_toolchain//:linker-components-riscv32-none",
+    ],
+)
+
+filegroup(
+    name = "archiver-files-riscv32-none",
+    srcs = [
+        "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:ar",
+        "@llvm_toolchain//:internal-use-tools-legacy",
+    ],
+)
+
+filegroup(
+    name = "assembler-files-riscv32-none",
+    srcs = [
+        "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:as",
+        "@llvm_toolchain//:internal-use-tools-legacy",
+    ],
+)
+
+cc_toolchain(
+    name = "cc-clang-riscv32-none",
+    all_files = "@llvm_toolchain//:all-files-riscv32-none",
+    ar_files = "@llvm_toolchain//:archiver-files-riscv32-none",
+    as_files = "@llvm_toolchain//:assembler-files-riscv32-none",
+    compiler_files = "@llvm_toolchain//:compiler-files-riscv32-none",
+    dwp_files = "@llvm_toolchain//:dwp-files-riscv32-none",
+    linker_files = "@llvm_toolchain//:linker-files-riscv32-none",
+    module_map = "@llvm_toolchain//:module-riscv32-none",
+    objcopy_files = "@llvm_toolchain//:objcopy-files-riscv32-none",
+    strip_files = "@llvm_toolchain//:strip-files-riscv32-none",
+    supports_header_parsing = True,
+    toolchain_config = "@llvm_toolchain//:local-riscv32-none",
+)
+
+toolchain(
+    name = "cc-toolchain-riscv32-none",
+    exec_compatible_with = [
+        "@@platforms//cpu:x86_64",
+        "@@platforms//os:linux",
+    ],
+    target_compatible_with = [
+        "@@platforms//cpu:riscv32",
+        "@@platforms//os:none",
+        "//toolchain/constraints:serv_i",
+    ],
+    toolchain = "@llvm_toolchain//:cc-clang-riscv32-none",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)
+
+native_binary(
+    name = "clang-apply-replacements",
+    src = "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:bin/clang-apply-replacements",
+    out = "clang-apply-replacements",
+)
+
+native_binary(
+    name = "clang-format",
+    src = "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:bin/clang-format",
+    out = "clang-format",
+)
+
+native_binary(
+    name = "clang-tidy",
+    src = "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:bin/clang-tidy",
+    out = "clang-tidy",
+)
+
+native_binary(
+    name = "clangd",
+    src = "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:bin/clangd",
+    out = "clangd",
+)
+
+filegroup(
+    name = "compiler-components-riscv32-none",
+    srcs = [
+        "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:clang",
+        "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:extra_config_site",
+        "@llvm_toolchain//:cxx_builtin_include_files-riscv32-none",
+        "@llvm_toolchain//:sysroot-components-riscv32-none",
+    ],
+)
+
+filegroup(
+    name = "compiler-files-riscv32-none",
+    srcs = [
+        "@llvm_toolchain//:compiler-components-riscv32-none",
+        "@llvm_toolchain//:internal-use-tools-legacy",
+    ],
+)
+
+filegroup(
+    name = "cxx_builtin_include_files-riscv32-none",
+    srcs = ["@@toolchains_llvm++llvm+llvm_toolchain_llvm//:include"],
+)
+
+filegroup(
+    name = "dwp-files-riscv32-none",
+    srcs = [
+        "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:dwp",
+        "@llvm_toolchain//:internal-use-tools-legacy",
+    ],
+)
+
+filegroup(
+    name = "internal-use-tools",
+    srcs = ["@llvm_toolchain//:bin"],
+    visibility = ["//visibility:private"],
+)
+
+filegroup(
+    name = "internal-use-tools-legacy",
+    srcs = [
+        "@llvm_toolchain//:bin/cc_wrapper.sh",
+        "@llvm_toolchain//:bin/clang-cpp",
+        "@llvm_toolchain//:bin/clang-format",
+        "@llvm_toolchain//:bin/clang-tidy",
+        "@llvm_toolchain//:bin/clangd",
+        "@llvm_toolchain//:bin/ld.lld",
+        "@llvm_toolchain//:bin/llvm-ar",
+        "@llvm_toolchain//:bin/llvm-cov",
+        "@llvm_toolchain//:bin/llvm-dwp",
+        "@llvm_toolchain//:bin/llvm-nm",
+        "@llvm_toolchain//:bin/llvm-objcopy",
+        "@llvm_toolchain//:bin/llvm-objdump",
+        "@llvm_toolchain//:bin/llvm-profdata",
+        "@llvm_toolchain//:bin/llvm-strip",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+filegroup(
+    name = "linker-components-riscv32-none",
+    srcs = [
+        "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:ar",
+        "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:clang",
+        "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:ld",
+        "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:lib_legacy",
+        "@llvm_toolchain//:sysroot-components-riscv32-none",
+    ],
+)
+
+filegroup(
+    name = "linker-files-riscv32-none",
+    srcs = [
+        "@llvm_toolchain//:internal-use-tools-legacy",
+        "@llvm_toolchain//:linker-components-riscv32-none",
+    ],
+)
+
+native_binary(
+    name = "llvm-cov",
+    src = "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:bin/llvm-cov",
+    out = "llvm-cov",
+)
+
+native_binary(
+    name = "llvm-profdata",
+    src = "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:bin/llvm-profdata",
+    out = "llvm-profdata",
+)
+
+native_binary(
+    name = "llvm-symbolizer",
+    src = "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:bin/llvm-symbolizer",
+    out = "llvm-symbolizer",
+)
+
+cc_toolchain_config(
+    name = "local-riscv32-none",
+    abi_libc_version = "unknown",
+    abi_version = "unknown",
+    archive_flags = [],
+    builtin_sysroot = "",
+    compile_flags = [
+        "--target=riscv32-unknown-none-elf",
+        "-U_FORTIFY_SOURCE",
+        "-fstack-protector",
+        "-fno-omit-frame-pointer",
+        "-fcolor-diagnostics",
+        "-Wall",
+        "-Wthread-safety",
+        "-Wself-assign",
+        "-march=rv32i_zicsr",
+        "-mabi=ilp32",
+    ],
+    compiler = "clang",
+    conly_flags = [],
+    coverage_compile_flags = [
+        "-fprofile-instr-generate",
+        "-fcoverage-mapping",
+    ],
+    coverage_link_flags = ["-fprofile-instr-generate"],
+    cpu = "riscv32",
+    cxx_builtin_include_directories = [
+        "%workspace%/external/toolchains_llvm++llvm+llvm_toolchain_llvm/include/c++/v1",
+        "%workspace%/external/toolchains_llvm++llvm+llvm_toolchain_llvm/lib/clang/20/include",
+        "%workspace%/external/toolchains_llvm++llvm+llvm_toolchain_llvm/include/riscv32-unknown-none-elf/c++/v1",
+    ],
+    cxx_flags = [
+        "-std=c++17",
+        "-stdlib=libstdc++",
+        "-Xclang",
+        "-fno-cxx-modules",
+        "-Wno-module-import-in-extern-c",
+    ],
+    dbg_compile_flags = [
+        "-g",
+        "-fstandalone-debug",
+    ],
+    fastbuild_compile_flags = [],
+    host_system_name = "x86_64",
+    link_flags = [
+        # XXX ?
+        "-Tstartup/linker.ld",
+        "--target=riscv32-unknown-none-elf",
+        "-no-canonical-prefixes",
+        "-fuse-ld=lld",
+        "-lm",
+        "-Wl,--build-id=md5",
+        "-Wl,--hash-style=gnu",
+        "-Wl,-z,relro,-z,now",
+        "-l:libstdc++.a",
+        "-nostartfiles",
+        "-mabi=ilp32",
+    ] + select({
+        "@toolchains_llvm//toolchain/config:use_libunwind": [],
+        "//conditions:default": [],
+    }) + select({
+        "@toolchains_llvm//toolchain/config:use_compiler_rt": [],
+        "//conditions:default": [],
+    }),
+    link_libs = [],
+    opt_compile_flags = [
+        "-g0",
+        "-O2",
+        "-D_FORTIFY_SOURCE=1",
+        "-DNDEBUG",
+        "-ffunction-sections",
+        "-fdata-sections",
+    ],
+    opt_link_flags = [],
+    supports_start_end_lib = True,
+    target_libc = "unknown",
+    target_system_name = "riscv32-unknown-none-elf",
+    tool_paths = {
+        "ar": "bin/llvm-ar",
+        "cpp": "bin/clang-cpp",
+        "dwp": "bin/llvm-dwp",
+        "gcc": "bin/cc_wrapper.sh",
+        "gcov": "bin/llvm-profdata",
+        "ld": "bin/ld.lld",
+        "llvm-cov": "bin/llvm-cov",
+        "llvm-profdata": "bin/llvm-profdata",
+        "nm": "bin/llvm-nm",
+        "objcopy": "bin/llvm-objcopy",
+        "objdump": "bin/llvm-objdump",
+        "strip": "bin/llvm-strip",
+        "parse_headers": "bin/cc_wrapper.sh",
+    },
+    toolchain_identifier = "clang-riscv32-none",
+    unfiltered_compile_flags = [
+        "-no-canonical-prefixes",
+        "-Wno-builtin-macro-redefined",
+        "-D__DATE__=\"redacted\"",
+        "-D__TIMESTAMP__=\"redacted\"",
+        "-D__TIME__=\"redacted\"",
+    ],
+)
+
+system_module_map(
+    name = "module-riscv32-none",
+    cxx_builtin_include_directories = [
+        "%workspace%/external/toolchains_llvm++llvm+llvm_toolchain_llvm/include/c++/v1",
+        "%workspace%/external/toolchains_llvm++llvm+llvm_toolchain_llvm/lib/clang/20/include",
+        "%workspace%/external/toolchains_llvm++llvm+llvm_toolchain_llvm/include/riscv32-unknown-none-elf/c++/v1",
+    ],
+    cxx_builtin_include_files = "@llvm_toolchain//:cxx_builtin_include_files-riscv32-none",
+    sysroot_files = "@llvm_toolchain//:sysroot-components-riscv32-none",
+    sysroot_path = "",
+)
+
+filegroup(
+    name = "objcopy-files-riscv32-none",
+    srcs = [
+        "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:objcopy",
+        "@llvm_toolchain//:internal-use-tools-legacy",
+    ],
+)
+
+cc_import(
+    name = "omp",
+    shared_library = "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:lib/libomp.so",
+)
+
+filegroup(
+    name = "strip-files-riscv32-none",
+    srcs = [
+        "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:strip",
+        "@llvm_toolchain//:internal-use-tools-legacy",
+    ],
+)
+
+filegroup(
+    name = "sysroot-components-riscv32-none",
+    srcs = [],
+)
+
