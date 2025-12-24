@@ -12,6 +12,7 @@ cc_library(
         "startup/start.c",
     ],
     target_compatible_with = [
+        "@platforms//cpu:riscv32",
         "@platforms//os:none",
         "//toolchain/constraints/march:serv_i",
     ],
@@ -46,21 +47,21 @@ filegroup(
 
 cc_toolchain(
     name = "cc-clang-riscv32-none",
-    all_files = "@llvm_toolchain//:all-files-riscv32-none",
-    ar_files = "@llvm_toolchain//:archiver-files-riscv32-none",
-    as_files = "@llvm_toolchain//:assembler-files-riscv32-none",
-    compiler_files = "@llvm_toolchain//:compiler-files-riscv32-none",
-    dwp_files = "@llvm_toolchain//:dwp-files-riscv32-none",
-    linker_files = "@llvm_toolchain//:linker-files-riscv32-none",
-    module_map = "@llvm_toolchain//:module-riscv32-none",
-    objcopy_files = "@llvm_toolchain//:objcopy-files-riscv32-none",
-    strip_files = "@llvm_toolchain//:strip-files-riscv32-none",
+    all_files = ":all-files-riscv32-none",
+    ar_files = ":archiver-files-riscv32-none",
+    as_files = ":assembler-files-riscv32-none",
+    compiler_files = ":compiler-files-riscv32-none",
+    dwp_files = ":dwp-files-riscv32-none",
+    linker_files = ":linker-files-riscv32-none",
+    module_map = ":module-riscv32-none",
+    objcopy_files = ":objcopy-files-riscv32-none",
+    strip_files = ":strip-files-riscv32-none",
     supports_header_parsing = True,
-    toolchain_config = "@llvm_toolchain//:local-riscv32-none",
+    toolchain_config = ":local-riscv32-none",
 )
 
 toolchain(
-    name = "cc-toolchain-riscv32-serv",
+    name = "cc-toolchain-riscv32-none",
     exec_compatible_with = [
         "@@platforms//cpu:x86_64",
         "@@platforms//os:linux",
@@ -219,10 +220,9 @@ cc_toolchain_config(
             "-nostartfiles",
             "-Tstartup/linker.ld",
             "-mabi=ilp32",
-            "-gookagooka",
         ],
         # This was found by trial and error. Mostly by error.
-        "stdlib": "none",
+        "stdlib": "libc++",
         "cxx_standard": "c++17",
         "conly_flags": None,
         "sysroot_path": None,
