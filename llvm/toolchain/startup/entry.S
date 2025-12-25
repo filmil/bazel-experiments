@@ -2,6 +2,8 @@
 
 .option norvc
 
+.extern _start
+
 .type asm_start, @function
 .global asm_start
 asm_start:
