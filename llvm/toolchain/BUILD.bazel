@@ -4,12 +4,24 @@ load("@bazel_skylib//rules:native_binary.bzl", "native_binary")
 load("@toolchains_llvm//toolchain:cc_toolchain_config.bzl", "cc_toolchain_config")
 load("@toolchains_llvm//toolchain/internal:system_module_map.bzl", "system_module_map")
 
-
-filegroup(
+cc_library(
     name = "startup",
     srcs = [
         "startup/entry.S",
         "startup/start.c",
+    ],
+    target_compatible_with = [
+        "@platforms//cpu:riscv32",
+        "@platforms//os:none",
+        "//toolchain/constraints:serv_i",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+
+filegroup(
+    name = "linker_script_zero",
+    srcs = [
         "startup/linker.ld"
     ],
 )
@@ -156,7 +168,7 @@ filegroup(
         "bin/llvm-profdata",
         "bin/llvm-strip",
         "@llvm_toolchain//:all-files-riscv32-none",
-        ":startup",
+        ":linker_script_zero",
     ],
     visibility = ["//visibility:private"],
 )
