@@ -172,3 +172,18 @@ jobs:
         uses: actions/checkout@v2
       - name: Build repo
         run: "cd js && bazel test --test_output=errors //examples/..."
+
+  test-llvm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup bazel
+        uses: bazel-contrib/setup-bazel@0.15.0
+        with:
+          bazelisk-cache: false
+          disk-cache: ${{ github.workflow }}
+          repository-cache: false
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build repo
+        run: "cd llvm && bazel build //..."
+
