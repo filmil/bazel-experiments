@@ -22,6 +22,23 @@ The machine does not support compressed rv32 instructions, so the setup
 adds the necessary flags. I also added the necessary constraints and platform,
 as well as the required startup files.
 
+## Instructions
+
+### Build
+
+Issuing this command should compile without errors:
+
+```
+bazel build //... --platforms=//toolchain/platform:serv_rv32i
+```
+
+Check result:
+
+```
+╰─>$ file bazel-bin/hello
+bazel-bin/hello: ELF 32-bit LSB executable, UCB RISC-V, soft-float ABI, version 1 (SYSV), statically linked, BuildID[md5/uuid]=125c19fa68a14b65e33a20acd8db7de0, not stripped
+```
+
 ## Limitations
 
 * For some reason I could not make `//toolchains:startup` a library.
