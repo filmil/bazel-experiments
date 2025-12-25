@@ -5,19 +5,13 @@ load("@toolchains_llvm//toolchain:cc_toolchain_config.bzl", "cc_toolchain_config
 load("@toolchains_llvm//toolchain/internal:system_module_map.bzl", "system_module_map")
 
 
-cc_library(
+filegroup(
     name = "startup",
     srcs = [
         "startup/entry.S",
         "startup/start.c",
+        "startup/linker.ld"
     ],
-    target_compatible_with = [
-        "@platforms//cpu:riscv32",
-        "@platforms//os:none",
-        "//toolchain/constraints/march:serv_i",
-    ],
-    visibility = ["//visibility:public"],
-    deps = [":startup/linker.ld"],
 )
 
 filegroup(
@@ -27,6 +21,14 @@ filegroup(
         ":compiler-components-riscv32-none",
         ":linker-components-riscv32-none",
     ],
+)
+
+filegroup(
+  name = "all-files-riscv32-none",
+  srcs = [
+    "@llvm_toolchain//:all-files-riscv32-none",
+    ":internal-use-tools-legacy",
+  ],
 )
 
 filegroup(
@@ -153,6 +155,8 @@ filegroup(
         "bin/llvm-objdump",
         "bin/llvm-profdata",
         "bin/llvm-strip",
+        "@llvm_toolchain//:all-files-riscv32-none",
+        ":startup",
     ],
     visibility = ["//visibility:private"],
 )
@@ -217,11 +221,11 @@ cc_toolchain_config(
         ],
         "extra_link_flags": [
             "-nostartfiles",
-            "-Tstartup/linker.ld",
+            "-Ttoolchain/startup/linker.ld",
             "-mabi=ilp32",
         ],
         # This was found by trial and error. Mostly by error.
-        "stdlib": "libc++",
+        "stdlib": "none",
         "cxx_standard": "c++17",
         "conly_flags": None,
         "sysroot_path": None,
