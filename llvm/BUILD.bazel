@@ -6,6 +6,9 @@ cc_binary(
     srcs = [
         "hello.cc",
     ],
+    deps = [
+        "//toolchain:startup",
+    ],
     target_compatible_with = [
         "@platforms//cpu:riscv32",
         "@platforms//os:none",
