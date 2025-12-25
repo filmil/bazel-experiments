@@ -1,19 +1,17 @@
 load("@rules_cc//cc:cc_import.bzl", "cc_import")
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
 load("@rules_cc//cc/toolchains:cc_toolchain.bzl", "cc_toolchain")
 load("@bazel_skylib//rules:native_binary.bzl", "native_binary")
 load("@toolchains_llvm//toolchain:cc_toolchain_config.bzl", "cc_toolchain_config")
 load("@toolchains_llvm//toolchain/internal:system_module_map.bzl", "system_module_map")
 
-cc_library(
+# I am keeping this target as a library instead of a prebuilt. This means that
+# I must add it as a dep to any binaries.
+filegroup(
     name = "startup",
     srcs = [
         "startup/entry.S",
         "startup/start.c",
-    ],
-    target_compatible_with = [
-        "@platforms//cpu:riscv32",
-        "@platforms//os:none",
-        "//toolchain/constraints:serv_i",
     ],
     visibility = ["//visibility:public"],
 )
@@ -292,10 +290,10 @@ filegroup(
     ],
 )
 
-cc_import(
-    name = "omp",
-    shared_library = "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:lib/libomp.so",
-)
+#cc_import(
+    #name = "omp",
+    #shared_library = "@@toolchains_llvm++llvm+llvm_toolchain_llvm//:lib/libomp.so",
+#)
 
 filegroup(
     name = "strip-files-riscv32-none",

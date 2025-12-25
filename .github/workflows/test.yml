@@ -185,5 +185,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build repo
-        run: "cd llvm && bazel build //..."
+        run: "cd llvm && bazel build //... --platforms=//toolchain/platform:serv_rv32i"
 

@@ -5,8 +5,6 @@ cc_binary(
     name = "hello",
     srcs = [
         "hello.cc",
-    ],
-    deps = [
         "//toolchain:startup",
     ],
     target_compatible_with = [
