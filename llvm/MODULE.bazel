@@ -4,6 +4,7 @@ module(
 )
 
 bazel_dep(name = "buildifier_prebuilt", version = "8.2.1.1", dev_dependency = True)
+
 bazel_dep(name = "platforms", version = "1.0.0")
 bazel_dep(name = "rules_cc", version = "0.2.16")
 bazel_dep(name = "toolchains_llvm", version = "1.6.0")
@@ -20,4 +21,5 @@ use_repo(llvm, "llvm_toolchain")
 
 # use_repo(llvm, "llvm_toolchain_llvm") # if you depend on specific tools in scripts
 register_toolchains("//toolchain:cc-toolchain-riscv32-none")
+
 register_toolchains("@llvm_toolchain//:all")

@@ -41,8 +41,6 @@ bazel-bin/hello: ELF 32-bit LSB executable, UCB RISC-V, soft-float ABI, version 
 
 ## Limitations
 
-* For some reason I could not make `//toolchains:startup` a library.
-
 * I didn't make `//toolchains:startup` auto-linked, it seems that one would
   need to prebuild the startup code.
 

@@ -5,12 +5,14 @@ cc_binary(
     name = "hello",
     srcs = [
         "hello.cc",
-        "//toolchain:startup",
     ],
     target_compatible_with = [
         "@platforms//cpu:riscv32",
         "@platforms//os:none",
         "//toolchain/constraints:serv_i",
+    ],
+    deps = [
+        "//toolchain:startup",
     ],
 )
 
