@@ -23,7 +23,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build
-        run: "cd wasm && bazel build //..."
+        run: "cd wasm && bazel build //... && bazel test //..."
 
   test-rv5-tools:
     runs-on: ubuntu-latest
