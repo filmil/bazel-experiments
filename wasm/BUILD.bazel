@@ -1,5 +1,6 @@
 load("@gazelle//:def.bzl", "gazelle")
 load("@buildifier_prebuilt//:rules.bzl", "buildifier")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
 
 # gazelle:prefix github.com/grahamjenson/bazel-golang-wasm-proto
 gazelle(name = "gazelle")
@@ -11,4 +12,10 @@ buildifier(
     ],
     lint_mode = "warn",
     mode = "diff",
+)
+
+sh_test(
+    name = "tbd",
+    srcs = ["test.bash"],
+    size = "small",
 )
